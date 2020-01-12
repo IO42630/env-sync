@@ -30,4 +30,4 @@ Sync files across directories:
 ### Issues <a name="issues"></a> 
 
 - What about parallel Threads?
-- What about error handling? (i.e. if a wed-directory is not aviable)
+- What about error handling? (i.e. if a web-directory is not available)
