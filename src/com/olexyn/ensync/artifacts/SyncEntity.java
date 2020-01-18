@@ -17,8 +17,7 @@ public class SyncEntity {
     public String name;
     public int syncInterval = 3600;
     public Map<String, SyncDirectory> syncDirectories = new HashMap<>();
-    private Map<String, File> mapCreated = new HashMap<>();
-    private Map<String, File> mapDeleted = new HashMap<>();
+
     Tools tools = new Tools();
 
     /**
@@ -43,44 +42,10 @@ public class SyncEntity {
         }
     }
 
-    public Map<String, File> getMapCreated() {
-        for (Map.Entry<String, SyncDirectory> entry : syncDirectories.entrySet()) {
-            SyncDirectory syncDirectory = entry.getValue();
-            for (File file : syncDirectory.getListCreated()) {
-                mapCreated.put(file.getPath(), file);
-            }
-
-        }
 
 
-        return mapCreated;
-    }
-
-    public Map<String, File> getMapDeleted() {
-
-        for (Map.Entry<String, SyncDirectory> entry : syncDirectories.entrySet()) {
-            SyncDirectory syncDirectory = entry.getValue();
-            for (File file : syncDirectory.getListDeleted()) {
-                mapDeleted.put(file.getPath(), file);
-            }
-
-        }
 
 
-        return mapDeleted;
-    }
 
-    public void addToMapCreated(List<File> listCreated) {
-        for (File file : listCreated) {
-            mapCreated.put(file.getPath(), file);
-        }
-    }
-
-
-    public void addToMapDeleted(List<File> listDeleted) {
-        for (File file : listDeleted) {
-            mapDeleted.put(file.getPath(), file);
-        }
-    }
 
 }

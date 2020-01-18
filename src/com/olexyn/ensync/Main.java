@@ -80,8 +80,7 @@ public class Main {
                 }
 
 
-                syncEntity.addToMapCreated(syncDirectory.getListCreated());
-                syncEntity.addToMapDeleted(syncDirectory.getListDeleted());
+                
 //
                 // WARNING:
                 //  Be very carefull when to update the StateFileOld
