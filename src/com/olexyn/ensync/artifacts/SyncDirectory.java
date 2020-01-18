@@ -1,12 +1,10 @@
 package com.olexyn.ensync.artifacts;
 
+import com.olexyn.ensync.Execute;
 import com.olexyn.ensync.Tools;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SyncDirectory {
 
@@ -20,9 +18,15 @@ public class SyncDirectory {
     private Map<String, File> poolNew = new HashMap<>();
     private List<File> listCreated = new ArrayList<>();
     private List<File> listDeleted = new ArrayList<>();
+    private SyncEntity syncEntity;
 
+    private String state = null;
+
+// For an explanation of what the STATES mean, see the flow.png
+    private final List<String>  STATES = new ArrayList<>(Arrays.asList( "NEW-1", "LIST-1" , "LIST-2" , "SYNC-1" , "NEW-2", "OLD-1"));
 
     Tools tools = new Tools();
+    Execute x = new Execute();
 
     /**
      * Create a SyncDirectory from realPath.
@@ -30,7 +34,9 @@ public class SyncDirectory {
      * @param realPath
      * @see SyncEntity
      */
-    public SyncDirectory(String realPath) {
+    public SyncDirectory(String realPath, SyncEntity syncEntity) {
+
+
         this.realPath = realPath;
         stateFileBasePath = "/tmp/find" + this.realPath.replace("/", "-");
         stateFileOldPath = stateFileBasePath + "-old";
@@ -39,6 +45,7 @@ public class SyncDirectory {
         stateFileNew = getStateFileNew();
         poolOld = getPoolOld();
         poolNew = getPoolNew();
+        this.syncEntity = syncEntity;
 
     }
 
@@ -61,9 +68,13 @@ public class SyncDirectory {
      * WRITE a new StateFileNew to Disk. This is IMPORTANT in order to make sure that StateFileOld is NEVER newer than StateFileNew.<p>
      * WRITE a new StateFileOld to Disk.
      */
-    public void updateStateFileBoth() {
+    public void updateStateFileOld() {
         //
-        tools.generateStateFile(realPath, stateFileNewPath);
+        if (state.equals(STATES.get(4))){
+            state = STATES.get(5);
+        } else {
+            return ;
+        }
         tools.generateStateFile(realPath, stateFileOldPath);
     }
 
@@ -81,7 +92,19 @@ public class SyncDirectory {
      */
     public void updateStateFileNew() {
         //
+        if (state == null || state.equals(STATES.get(5))){
+            state = STATES.get(0);
+        }else if (state.equals(STATES.get(3))){
+            state = STATES.get(4);
+        } else {
+            return;
+        }
+
+
+
         tools.generateStateFile(realPath, stateFileNewPath);
+
+
     }
 
 
@@ -118,17 +141,89 @@ public class SyncDirectory {
     }
 
     public List<File> getListCreated() {
-
-        listCreated = tools.mapMinus(getPoolNew(), getPoolOld());
+        if (state.equals(STATES.get(0))){
+            state = STATES.get(1);
+        } else {
+            return null;
+        }
+        updateListCreated();
 
         return listCreated;
     }
 
-    public List<File> getListDeleted() {
+    public void updateListCreated(){
+        if (state.equals(""))
+        listCreated = tools.mapMinus(getPoolNew(), getPoolOld());
+    }
 
+    public List<File> getListDeleted() {
+        if (state.equals(STATES.get(1))){
+            state = STATES.get(2);
+        } else {
+            return null;
+        }
         listDeleted = tools.mapMinus(getPoolOld(), getPoolNew());
 
         return listDeleted;
+    }
+
+    public void doSyncOps(){
+
+        if (state.equals(STATES.get(2))){
+            state = STATES.get(3);
+        } else {
+            return ;
+        }
+
+
+
+
+
+
+        for (File createdFile : this.getListCreated()) {
+            for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+                SyncDirectory otherSyncDirectory = otherEntry.getValue();
+
+                if (!this.equals(otherSyncDirectory)){
+                    // Example:
+                    //  syncDirectory /foo
+                    //  otherSyncDirectory /bar
+                    //  createdFile  /foo/hello/created-file.gif
+                    //  relativePath /hello/created-file.gif
+                    String relativePath = createdFile.getPath().replace(this.realPath, "");
+                    String targetPath = otherSyncDirectory.realPath + relativePath;
+                    String targetParentPath = new File(targetPath).getParent();
+                    if (!new File(targetParentPath).exists()){
+                        String[] cmd = new String[]{"mkdir",
+                                                    "-p",
+                                                    targetParentPath};
+                        x.execute(cmd);
+                    }
+
+                    String[] cmd = new String[]{"cp",
+                                                createdFile.getPath(),
+                                                otherSyncDirectory.realPath + relativePath};
+                    x.execute(cmd);
+                }
+            }
+
+        }
+
+        //
+        for (File deletedFile : this.getListDeleted()) {
+
+            for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+                SyncDirectory otherSyncDirectory = otherEntry.getValue();
+
+                if (!this.equals(otherSyncDirectory)){
+                    String relativePath = deletedFile.getPath().replace(this.realPath, "");
+                    String[] cmd = new String[]{"rm", "-r",
+                                                otherSyncDirectory.realPath + relativePath};
+                    x.execute(cmd);
+                }
+            }
+
+        }
     }
 
 }

@@ -25,7 +25,6 @@ public class SyncEntity {
      */
     public SyncEntity(String name) {
         this.name = name;
-
     }
 
     /**
@@ -38,7 +37,7 @@ public class SyncEntity {
      */
     public void addDirectory(String realPath) {
         if (new File(realPath).isDirectory()) {
-            syncDirectories.put(realPath, new SyncDirectory(realPath));
+            syncDirectories.put(realPath, new SyncDirectory(realPath, this));
         }
     }
 

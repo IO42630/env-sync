@@ -3,7 +3,6 @@ package com.olexyn.ensync;
 import com.olexyn.ensync.artifacts.SyncDirectory;
 import com.olexyn.ensync.artifacts.SyncEntity;
 
-import java.io.File;
 import java.util.*;
 
 public class Main {
@@ -34,53 +33,10 @@ public class Main {
                 syncDirectory.updatePoolNew();
 
                 //
-                for (File createdFile : syncDirectory.getListCreated()) {
-                    for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
-                        SyncDirectory otherSyncDirectory = otherEntry.getValue();
 
-                        if (!syncDirectory.equals(otherSyncDirectory)){
-                            // Example:
-                            //  syncDirectory /foo
-                            //  otherSyncDirectory /bar
-                            //  createdFile  /foo/hello/created-file.gif
-                            //  relativePath /hello/created-file.gif
-                            String relativePath = createdFile.getPath().replace(syncDirectory.realPath, "");
-                            String targetPath = otherSyncDirectory.realPath + relativePath;
-                            String targetParentPath = new File(targetPath).getParent();
-                            if (!new File(targetParentPath).exists()){
-                                String[] cmd = new String[]{"mkdir",
-                                                            "-p",
-                                                            targetParentPath};
-                                x.execute(cmd);
-                            }
-
-                            String[] cmd = new String[]{"cp",
-                                                        createdFile.getPath(),
-                                                        otherSyncDirectory.realPath + relativePath};
-                            x.execute(cmd);
-                        }
-                    }
-
-                }
-
-                //
-                for (File deletedFile : syncDirectory.getListDeleted()) {
-
-                    for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
-                        SyncDirectory otherSyncDirectory = otherEntry.getValue();
-
-                        if (!syncDirectory.equals(otherSyncDirectory)){
-                            String relativePath = deletedFile.getPath().replace(syncDirectory.realPath, "");
-                            String[] cmd = new String[]{"rm", "-r",
-                                                        otherSyncDirectory.realPath + relativePath};
-                            x.execute(cmd);
-                        }
-                    }
-
-                }
+                 syncDirectory.doSyncOps();
 
 
-                
 //
                 // WARNING:
                 //  Be very carefull when to update the StateFileOld
@@ -88,7 +44,7 @@ public class Main {
                 //   -> create newFile -> update StateFileNew-> getListCreated contains newFile -> addToMapCreated -> create copies as needed -> updateStateFileOld -> OK
                 //   -> create newFile -> update StateFileOld -> getListDeletd contains newFile -> VERY BAD
                 //
-                syncDirectory.updateStateFileBoth();
+                syncDirectory.updateStateFileOld();
                 syncDirectory.updatePoolBoth();
 
 
