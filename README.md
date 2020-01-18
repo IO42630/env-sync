@@ -7,29 +7,32 @@
 <br>
 
 ### About <a name="about"></a> 
-Sync files across directories:
-* with rsync
-* using config file: sync.conf
-* at system start-up (TODO)
+Sync files across directories.
 
 <br>
 <br>
 
 ### Package Contents <a name="package-contents"></a> 
 
-| Class         | Description |
+| File         | Description |
 |---------------|-------------|
-| Execute       | Issues com.olexyn.ensync.shell commands.|
-| Main          | Main class. Run from here.|
+| artifacts/SyncDirectory | A directory that is registered to a SyncEntity.|
+| artifacts/SyncEntity | A collection of directories that are being syncronized.|
+| shell/ | Contains .sh files |
+| Execute       | Issues sh commands.|
+| Main          | Run from here.|
 | Routines      | Contains higher level routines.|
-| Tools         | Simple tools used by other classes.|
+| Tools         | Contains lower level tools that are used by other classes.|
 
 <br>
 <br>
 
 ### Issues <a name="issues"></a> 
 
-- What about parallel Threads?
-- What about error handling? (i.e. if a web-directory is not available)
-- Make commands more expressive e.g. collection dir dir dir -> keep all 3 dirs on sync.
-- Figure out a way to handle deletions.
+- Create a parallel Thread for each SyncEnity.
+- Add support for modification dates. 
+  - And thereby eventually support 10 out of 10 file operation types.
+- Reduce disk access.
+- Have some error handling. (i.e. if a web-directory is not available)
+- Create a UI.
+- Start the program at system start.
