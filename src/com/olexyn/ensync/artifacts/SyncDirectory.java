@@ -110,7 +110,7 @@ public class SyncDirectory {
 
     public Map<String, File> getPoolOld() {
         if (poolOld.isEmpty()) {
-            updatePoolBoth();
+            updatePoolOld();
         }
         return poolOld;
     }
@@ -118,8 +118,8 @@ public class SyncDirectory {
     /**
      * UPDATE  PoolOld FROM contents of StateFileOld.
      */
-    public void updatePoolBoth() {
-        poolNew = tools.fileToPool(getStateFileNew(), "all");
+    public void updatePoolOld() {
+
         poolOld = tools.fileToPool(getStateFileOld(), "all");
 
     }
@@ -152,7 +152,7 @@ public class SyncDirectory {
     }
 
     public void updateListCreated(){
-        if (state.equals(""))
+
         listCreated = tools.mapMinus(getPoolNew(), getPoolOld());
     }
 
@@ -180,7 +180,7 @@ public class SyncDirectory {
 
 
 
-        for (File createdFile : this.getListCreated()) {
+        for (File createdFile : listCreated) {
             for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
                 SyncDirectory otherSyncDirectory = otherEntry.getValue();
 
@@ -210,7 +210,7 @@ public class SyncDirectory {
         }
 
         //
-        for (File deletedFile : this.getListDeleted()) {
+        for (File deletedFile : listDeleted) {
 
             for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
                 SyncDirectory otherSyncDirectory = otherEntry.getValue();

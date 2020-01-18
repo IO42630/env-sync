@@ -18,7 +18,7 @@ public class Main {
         SyncEntity syncEntity = new SyncEntity("test");
         syncEntity.addDirectory("/home/user/test/a");
         syncEntity.addDirectory("/home/user/test/b");
-        syncEntity.addDirectory("/home/user/test/c");
+        //syncEntity.addDirectory("/home/user/test/c");
 
         int br1 = 0;
 
@@ -32,6 +32,10 @@ public class Main {
                 syncDirectory.updateStateFileNew();
                 syncDirectory.updatePoolNew();
 
+                syncDirectory.getListCreated();
+                syncDirectory.getListDeleted();
+
+
                 //
 
                  syncDirectory.doSyncOps();
@@ -44,8 +48,11 @@ public class Main {
                 //   -> create newFile -> update StateFileNew-> getListCreated contains newFile -> addToMapCreated -> create copies as needed -> updateStateFileOld -> OK
                 //   -> create newFile -> update StateFileOld -> getListDeletd contains newFile -> VERY BAD
                 //
+                syncDirectory.updateStateFileNew();
+                syncDirectory.updatePoolNew();
+
                 syncDirectory.updateStateFileOld();
-                syncDirectory.updatePoolBoth();
+                syncDirectory.updatePoolOld();
 
 
 
