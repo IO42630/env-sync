@@ -19,7 +19,7 @@ Sync files across directories:
 
 | Class         | Description |
 |---------------|-------------|
-| Execute       | Issues shell commands.|
+| Execute       | Issues com.olexyn.ensync.shell commands.|
 | Main          | Main class. Run from here.|
 | Routines      | Contains higher level routines.|
 | Tools         | Simple tools used by other classes.|
@@ -31,3 +31,5 @@ Sync files across directories:
 
 - What about parallel Threads?
 - What about error handling? (i.e. if a web-directory is not available)
+- Make commands more expressive e.g. collection dir dir dir -> keep all 3 dirs on sync.
+- Figure out a way to handle deletions.

@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>420</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Directory B</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>380</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Directory A</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>230</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Delete
+bg=red
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>270</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Create
+bg=green
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>310</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Modify
+bg=yellow
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>440</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>YES
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>440</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>530</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>890</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>NO
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>190</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Unchanged
+bg=white
+group=1</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>440</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>530</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>620</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>620</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>710</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>710</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>800</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>800</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>890</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>890</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>980</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>980</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1070</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1070</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1160</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1160</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1250</x>
+      <y>380</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1250</x>
+      <y>420</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>File
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>420</x>
+      <y>190</y>
+      <w>150</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>2^4 = 16
+however only 10
+because 6 are symmetrical.
+bg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLObject</id>
+    <coordinates>
+      <x>290</x>
+      <y>530</y>
+      <w>110</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Covered?</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>620</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>MAYBE
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>530</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>YES
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>710</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>YES
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>980</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>NO
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1160</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>NO
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1250</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>NO
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>800</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>NO
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1070</x>
+      <y>530</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>NO
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
