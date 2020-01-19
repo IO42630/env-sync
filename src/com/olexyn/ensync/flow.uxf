@@ -4,12 +4,12 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1230</x>
-      <y>620</y>
+      <x>970</x>
+      <y>740</y>
       <w>130</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>StateFileOld
+    <panel_attributes>StateFile
 bg=yellow
 halign=left
 group=1</panel_attributes>
@@ -18,12 +18,12 @@ group=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1360</x>
-      <y>620</y>
+      <x>1100</x>
+      <y>740</y>
       <w>130</w>
       <h>30</h>
     </coordinates>
-    <panel_attributes>StateFileNew
+    <panel_attributes>State
 bg=green
 halign=left
 group=1</panel_attributes>
@@ -32,8 +32,8 @@ group=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1360</x>
-      <y>650</y>
+      <x>1100</x>
+      <y>770</y>
       <w>130</w>
       <h>30</h>
     </coordinates>
@@ -45,12 +45,12 @@ group=1</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1230</x>
-      <y>520</y>
+      <x>970</x>
+      <y>660</y>
       <w>130</w>
       <h>30</h>
     </coordinates>
-    <panel_attributes>StateFileOld
+    <panel_attributes>StateFile
 bg=yellow
 halign=left
 group=2</panel_attributes>
@@ -59,12 +59,12 @@ group=2</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1360</x>
-      <y>520</y>
+      <x>1100</x>
+      <y>660</y>
       <w>130</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>StateFileNew
+    <panel_attributes>State
 bg=green
 halign=left
 group=2</panel_attributes>
@@ -73,8 +73,8 @@ group=2</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1230</x>
-      <y>550</y>
+      <x>970</x>
+      <y>690</y>
       <w>130</w>
       <h>30</h>
     </coordinates>
@@ -86,25 +86,12 @@ group=2</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1040</x>
-      <y>430</y>
+      <x>730</x>
+      <y>670</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>update
-StateFileNew
-halign=left</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1040</x>
-      <y>530</y>
-      <w>120</w>
-      <h>40</h>
-    </coordinates>
-    <panel_attributes>get
+    <panel_attributes>make
 ListCreated
 halign=left</panel_attributes>
     <additional_attributes/>
@@ -112,92 +99,34 @@ halign=left</panel_attributes>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1040</x>
-      <y>630</y>
+      <x>730</x>
+      <y>710</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>get
+    <panel_attributes>make
 ListDeleted
 halign=left</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>500</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>600</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1040</x>
-      <y>830</y>
+      <x>730</x>
+      <y>790</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>do
-SyncOps 
+    <panel_attributes>doCreate
 halign=left
 style=wordwrap</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>800</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>560</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>940</x>
-      <y>390</y>
-      <w>590</w>
-      <h>810</h>
-    </coordinates>
-    <panel_attributes>For Each SyncDirectory
-halign=right
-layer=-1</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>1220</x>
-      <y>510</y>
+      <x>960</x>
+      <y>650</y>
       <w>280</w>
       <h>80</h>
     </coordinates>
@@ -208,219 +137,25 @@ group=2</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1150</x>
-      <y>640</y>
-      <w>90</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>lt=.</panel_attributes>
-    <additional_attributes>70.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>370</y>
-      <w>30</w>
-      <h>80</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;60.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLSpecialState</id>
-    <coordinates>
-      <x>1090</x>
-      <y>360</y>
-      <w>20</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>type=initial</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLSpecialState</id>
-    <coordinates>
-      <x>1090</x>
-      <y>1220</y>
-      <w>20</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>type=final</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>900</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>1170</y>
-      <w>30</w>
-      <h>70</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1040</x>
-      <y>1030</y>
-      <w>120</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>update
-StateFileOld
-halign=left
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1030</x>
-      <y>590</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 1 : LIST-1
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1040</x>
-      <y>930</y>
-      <w>120</w>
-      <h>40</h>
-    </coordinates>
-    <panel_attributes>update
-StateFileNew
-halign=left
-style=wordwrap</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1030</x>
-      <y>890</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 4 : SYNC-1
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1030</x>
-      <y>990</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 5 : NEW-2
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1030</x>
+      <x>730</x>
       <y>490</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 0 : NEW-1
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1030</x>
-      <y>1100</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 6 : OLD-1
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>1000</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLSpecialState</id>
-    <coordinates>
-      <x>1080</x>
-      <y>1140</y>
-      <w>40</w>
+      <w>120</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>type=decision</panel_attributes>
+    <panel_attributes>read
+StateFile
+bg=yellow
+halign=left
+style=wordwrap</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>1110</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>970</x>
-      <y>440</y>
-      <w>130</w>
-      <h>740</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>70.0;10.0;10.0;10.0;10.0;720.0;110.0;720.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>460</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1220</x>
-      <y>610</y>
+      <x>960</x>
+      <y>730</y>
       <w>280</w>
       <h>80</h>
     </coordinates>
@@ -433,115 +168,241 @@ group=1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1150</x>
-      <y>540</y>
-      <w>90</w>
+      <x>840</x>
+      <y>680</y>
+      <w>140</w>
       <h>30</h>
     </coordinates>
     <panel_attributes>lt=.</panel_attributes>
-    <additional_attributes>10.0;10.0;70.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;120.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLState</id>
     <coordinates>
-      <x>1030</x>
-      <y>690</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 2 : LIST-2
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>660</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>1070</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>960</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>1090</x>
-      <y>860</y>
-      <w>30</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1030</x>
-      <y>790</y>
-      <w>140</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>State 3 : LIST-3
-bg=orange</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLState</id>
-    <coordinates>
-      <x>1040</x>
-      <y>730</y>
+      <x>730</x>
+      <y>750</y>
       <w>120</w>
       <h>40</h>
     </coordinates>
-    <panel_attributes>get
+    <panel_attributes>make
 ListModified
 halign=left</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>Relation</id>
+    <id>UMLState</id>
     <coordinates>
-      <x>1090</x>
-      <y>760</y>
-      <w>30</w>
-      <h>50</h>
+      <x>730</x>
+      <y>630</y>
+      <w>120</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
+    <panel_attributes>readState
+bg=green
+halign=left
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>730</x>
+      <y>460</y>
+      <w>120</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>START
+bg=gray
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>730</x>
+      <y>910</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>write
+StateFile
+bg=yellow
+halign=left
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1090</x>
-      <y>700</y>
+      <x>840</x>
+      <y>720</y>
+      <w>140</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>10.0;10.0;120.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>730</x>
+      <y>830</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>doDelete
+halign=left
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>730</x>
+      <y>870</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>doModify
+halign=left
+style=wordwrap</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLSpecialState</id>
+    <coordinates>
+      <x>770</x>
+      <y>560</y>
+      <w>40</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>type=decision</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>520</y>
       <w>30</w>
-      <h>50</h>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;30.0;10.0;10.0</additional_attributes>
+    <additional_attributes>10.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>610</x>
+      <y>570</y>
+      <w>200</w>
+      <h>440</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+[No State File]</panel_attributes>
+    <additional_attributes>180.0;380.0;180.0;420.0;10.0;420.0;10.0;10.0;160.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>590</y>
+      <w>30</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+</panel_attributes>
+    <additional_attributes>10.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>670</x>
+      <y>640</y>
+      <w>80</w>
+      <h>310</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+loop</panel_attributes>
+    <additional_attributes>60.0;10.0;10.0;10.0;10.0;290.0;60.0;290.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>970</x>
+      <y>820</y>
+      <w>130</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>StateFile
+bg=yellow
+halign=left
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1100</x>
+      <y>820</y>
+      <w>130</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>State
+bg=green
+halign=left
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>960</x>
+      <y>810</y>
+      <w>540</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>
+halign=left
+layer=-1
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1320</x>
+      <y>820</y>
+      <w>130</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>ListModified
+halign=left
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>1230</x>
+      <y>820</y>
+      <w>90</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>modified
+style=wordwrap
+group=3</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>840</x>
+      <y>760</y>
+      <w>140</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>10.0;10.0;120.0;80.0</additional_attributes>
   </element>
 </diagram>
