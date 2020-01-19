@@ -8,22 +8,12 @@ import java.util.*;
 
 public class SyncDirectory {
 
-    public String realPath;
-    public String stateFileBasePath;
-    public String stateFileOldPath;
-    public String stateFileNewPath;
-    public File stateFileOld;
-    public File stateFileNew;
-    private Map<String, File> poolOld = new HashMap<>();
-    private Map<String, File> poolNew = new HashMap<>();
-    private List<File> listCreated = new ArrayList<>();
-    private List<File> listDeleted = new ArrayList<>();
+
     private SyncEntity syncEntity;
+    public String path= null;
 
-    private String state = null;
 
-// For an explanation of what the STATES mean, see the flow.png
-    private final List<String>  STATES = new ArrayList<>(Arrays.asList( "NEW-1", "LIST-1" , "LIST-2" , "SYNC-1" , "NEW-2", "OLD-1"));
+
 
     Tools tools = new Tools();
     Execute x = new Execute();
@@ -31,169 +21,163 @@ public class SyncDirectory {
     /**
      * Create a SyncDirectory from realPath.
      *
-     * @param realPath
+
      * @see SyncEntity
      */
-    public SyncDirectory(String realPath, SyncEntity syncEntity) {
+    public SyncDirectory(String path , SyncEntity syncEntity) {
 
-
-        this.realPath = realPath;
-        stateFileBasePath = "/tmp/find" + this.realPath.replace("/", "-");
-        stateFileOldPath = stateFileBasePath + "-old";
-        stateFileNewPath = stateFileBasePath + "-new";
-        stateFileOld = getStateFileOld();
-        stateFileNew = getStateFileNew();
-        poolOld = getPoolOld();
-        poolNew = getPoolNew();
+        this.path = path;
         this.syncEntity = syncEntity;
 
     }
 
+
     /**
-     * IF NOT EXISTS the StateFileOld for this SyncDirectory,<p>
-     * - THEN create the File on Disk.
+     * NOTE that the SFile().lastModifiedOld is not set here, so it is 0 by default.
+     */
+    public Map<String, SyncFile> readState(String path) {
+        Map<String, SyncFile> filemap = new HashMap<>();
+
+        Execute.TwoBr find = x.execute(new String[]{"find",
+                                                    path});
+
+        List<String> pathList = tools.brToListString(find.output);
+
+        for (String filePath : pathList) {
+            filemap.put(filePath, new SyncFile(filePath));
+        }
+
+
+        return filemap;
+
+
+    }
+
+
+    /**
+     * READ the contents of StateFile to Map.
+     */
+    public Map<String, SyncFile> readStateFile(String path) {
+        Map<String, SyncFile> filemap = new HashMap<>();
+        List<String> lines = tools.fileToLines(new File(stateFilePath(path)));
+
+        for (String line : lines) {
+            // this is a predefined format: "modification-time path"
+            String modTimeString = line.split("")[0];
+            long modTime = Long.parseLong(modTimeString);
+
+            String sFilePath = line.replace(modTimeString + "", "");
+            SyncFile sfile = new SyncFile(sFilePath);
+
+            sfile.setLastModifiedOld(modTime);
+
+            filemap.put(line, sfile);
+        }
+
+        return filemap;
+
+    }
+
+
+    /**
+     * Compare the OLD and NEW pools.
      *
-     * @return the StateFileOld.
+     * @return
      */
-    public File getStateFileOld() {
-        stateFileOld = new File(stateFileOldPath);
-        if (!stateFileOld.exists()) {
-            stateFileOld = tools.generateStateFile(realPath, stateFileOldPath);
-        }
-        return stateFileOld;
+    public List<SyncFile> makeListCreated(String path) {
+
+        return tools.mapMinus(readState(path), readStateFile(path));
     }
+
+
+    public String stateFilePath(String path) {
+        return "/tmp/ensync/state" + path.replace("/", "-");
+    }
+
 
     /**
-     * READ directory contents.<p>
-     * WRITE a new StateFileNew to Disk. This is IMPORTANT in order to make sure that StateFileOld is NEVER newer than StateFileNew.<p>
-     * WRITE a new StateFileOld to Disk.
+     * Compare the OLD and NEW pools.
+     *
+     * @return
      */
-    public void updateStateFileOld() {
-        //
-        if (state.equals(STATES.get(4))){
-            state = STATES.get(5);
-        } else {
-            return ;
-        }
-        tools.generateStateFile(realPath, stateFileOldPath);
+    public List<SyncFile> makeListDeleted(String path)  {
+
+
+        return tools.mapMinus(readStateFile(path), readState(path));
     }
 
-    public File getStateFileNew() {
-        stateFileNew = new File(stateFileNewPath);
-        if (!stateFileNew.exists()) {
-            stateFileNew = tools.generateStateFile(realPath, stateFileNewPath);
-        }
-        return stateFileNew;
-    }
 
     /**
-     * READ directory contents.<p>
-     * WRITE a new StateFileNew Disk.
+     * Compare the OLD and NEW pools.
+     *
+     * @return
      */
-    public void updateStateFileNew() {
-        //
-        if (state == null || state.equals(STATES.get(5))){
-            state = STATES.get(0);
-        }else if (state.equals(STATES.get(3))){
-            state = STATES.get(4);
-        } else {
-            return;
+    public List<SyncFile> makeListModified(String path) {
+
+        List<SyncFile> listModified = new ArrayList<>();
+        Map<String, SyncFile> oldMap = readStateFile(path);
+
+        for (Map.Entry<String, SyncFile> newFileEntry : readState(path).entrySet()) {
+            // If KEY exists in OLD , thus FILE was NOT created.
+            String newFileKey = newFileEntry.getKey();
+            SyncFile newFile = newFileEntry.getValue();
+            if (oldMap.containsKey(newFileKey)) {
+
+                long lastModifiedNew = newFile.lastModified();
+
+
+                long lastModifiedOld = oldMap.get(newFileKey).lastModifiedOld();
+
+                if (lastModifiedNew > lastModifiedOld) {
+                    listModified.add(newFile);
+                }
+            }
         }
-
-
-
-        tools.generateStateFile(realPath, stateFileNewPath);
-
-
+        return listModified;
     }
 
-
-    public Map<String, File> getPoolOld() {
-        if (poolOld.isEmpty()) {
-            updatePoolOld();
-        }
-        return poolOld;
-    }
 
     /**
-     * UPDATE  PoolOld FROM contents of StateFileOld.
+     * QUERY state of the filesystem at realPath.
+     * WRITE the state of the filesystem to file.
      */
-    public void updatePoolOld() {
-
-        poolOld = tools.fileToPool(getStateFileOld(), "all");
-
-    }
+    public void writeStateFile(String path) {
+        List<String> outputList = new ArrayList<>();
 
 
-    public Map<String, File> getPoolNew() {
-        if (poolNew.isEmpty()) {
-            updatePoolNew();
-        }
-        return poolNew;
-    }
 
-    /**
-     * UPDATE  PoolNew FROM contents of StateFileNew.
-     */
-    public void updatePoolNew() {
-        poolNew = tools.fileToPool(getStateFileNew(), "all");
+        Execute.TwoBr find = x.execute(new String[]{"find",
+                                                    path});
 
-    }
+        List<String> pathList = tools.brToListString(find.output);
 
-    public List<File> getListCreated() {
-        if (state.equals(STATES.get(0))){
-            state = STATES.get(1);
-        } else {
-            return null;
-        }
-        updateListCreated();
 
-        return listCreated;
-    }
-
-    public void updateListCreated(){
-
-        listCreated = tools.mapMinus(getPoolNew(), getPoolOld());
-    }
-
-    public List<File> getListDeleted() {
-        if (state.equals(STATES.get(1))){
-            state = STATES.get(2);
-        } else {
-            return null;
-        }
-        listDeleted = tools.mapMinus(getPoolOld(), getPoolNew());
-
-        return listDeleted;
-    }
-
-    public void doSyncOps(){
-
-        if (state.equals(STATES.get(2))){
-            state = STATES.get(3);
-        } else {
-            return ;
+        for (String filePath : pathList) {
+            long lastModified = new File(filePath).lastModified();
+            outputList.add("" + lastModified + " " + filePath);
         }
 
+        tools.writeStringListToFile(stateFilePath(path), outputList);
+    }
 
 
-
+    public void doCreate(List<SyncFile> listCreated){
 
 
         for (File createdFile : listCreated) {
             for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
                 SyncDirectory otherSyncDirectory = otherEntry.getValue();
 
-                if (!this.equals(otherSyncDirectory)){
+                if (!this.equals(otherSyncDirectory)) {
                     // Example:
                     //  syncDirectory /foo
                     //  otherSyncDirectory /bar
                     //  createdFile  /foo/hello/created-file.gif
                     //  relativePath /hello/created-file.gif
-                    String relativePath = createdFile.getPath().replace(this.realPath, "");
-                    String targetPath = otherSyncDirectory.realPath + relativePath;
+                    String relativePath = createdFile.getPath().replace(this.path, "");
+                    String targetPath = otherSyncDirectory.path + relativePath;
                     String targetParentPath = new File(targetPath).getParent();
-                    if (!new File(targetParentPath).exists()){
+                    if (!new File(targetParentPath).exists()) {
                         String[] cmd = new String[]{"mkdir",
                                                     "-p",
                                                     targetParentPath};
@@ -202,28 +186,44 @@ public class SyncDirectory {
 
                     String[] cmd = new String[]{"cp",
                                                 createdFile.getPath(),
-                                                otherSyncDirectory.realPath + relativePath};
-                    x.execute(cmd);
-                }
-            }
-
-        }
-
-        //
-        for (File deletedFile : listDeleted) {
-
-            for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
-                SyncDirectory otherSyncDirectory = otherEntry.getValue();
-
-                if (!this.equals(otherSyncDirectory)){
-                    String relativePath = deletedFile.getPath().replace(this.realPath, "");
-                    String[] cmd = new String[]{"rm", "-r",
-                                                otherSyncDirectory.realPath + relativePath};
+                                                otherSyncDirectory.path + relativePath};
                     x.execute(cmd);
                 }
             }
 
         }
     }
+
+
+
+    public void doDelete(List<SyncFile> listDeleted){
+
+        for (File deletedFile : listDeleted) {
+
+            for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+                SyncDirectory otherSyncDirectory = otherEntry.getValue();
+
+                if (!this.equals(otherSyncDirectory)) {
+                    String relativePath = deletedFile.getPath().replace(this.path, "");
+                    String[] cmd = new String[]{"rm",
+                                                "-r",
+                                                otherSyncDirectory.path + relativePath};
+                    x.execute(cmd);
+                }
+            }
+
+        }
+
+
+    }
+
+    public void doModify(List<SyncFile> listModified) {
+
+
+
+
+
+    }
+
 
 }

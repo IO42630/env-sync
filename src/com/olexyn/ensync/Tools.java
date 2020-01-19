@@ -1,13 +1,11 @@
 package com.olexyn.ensync;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
+import com.olexyn.ensync.artifacts.SyncFile;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Tools {
 
@@ -18,25 +16,15 @@ public class Tools {
     }
 
 
+
+
+
     /**
+     * Convert BufferedReader to String.
      *
+     * @param br BufferedReader
+     * @return String
      */
-    public void rsync(String param,
-                      String source,
-                      String destination) {
-        //
-        BufferedReader foo = x.execute(new String[]{"rsync",
-                                                    param,
-                                                    source,
-                                                    destination}).output;
-    }
-
-    public String getConf() {
-        BufferedReader output = x.execute(new String[]{"cat",
-                                                       System.getProperty("user.dir") + "/src/com/olexyn/ensync/sync.conf"}).output;
-        return brToString(output);
-    }
-
     public String brToString(BufferedReader br) {
         StringBuilder sb = new StringBuilder();
         Object[] br_array = br.lines().toArray();
@@ -46,30 +34,23 @@ public class Tools {
         return sb.toString();
     }
 
+
     /**
-     * StateFile -> FilePool
+     * Convert BufferedReader to List of Strings.
+     *
+     * @param br BufferedReader
+     * @return List
      */
-    public Map<String, File> fileToPool(File file,
-                                        String type) {
-        List<String> lines = fileToLines(file);
-        return linesToFilePool(lines, type);
+    public List<String> brToListString(BufferedReader br) {
+        List<String> list = new ArrayList<>();
+        Object[] br_array = br.lines().toArray();
+        for (int i = 0; i < br_array.length; i++) {
+            list.add(br_array[i].toString());
+        }
+        return list;
     }
 
 
-    /**
-     * CREATE a StateFile from realPath. <p>
-     * WRITE the StateFle to stateFilePath.
-     * @param realPath the path of the directory the StateFile is created for.
-     * @param stateFilePath the desired path for the created Statefile.
-     */
-    public File generateStateFile(String realPath, String stateFilePath) {
-        String[] cmd = new String[]{System.getProperty("user.dir") + "/src/com/olexyn/ensync/shell/toFile.sh",
-                                    "find",
-                                    realPath,
-                                    stateFilePath};
-        x.execute(cmd);
-        return new File(realPath);
-    }
 
 
     public List<String> fileToLines(File file) {
@@ -84,32 +65,19 @@ public class Tools {
     }
 
 
-    public Map<String, File> linesToFilePool(List<String> lines,
-                                             String type) {
-
-        Map<String, File> filepool = new HashMap<>();
-
-        for (String line : lines) {
-            File file = new File(line);
-
-            if (type.equals("all") || type.equals("dir") && file.isDirectory() || type.equals("file") && file.isFile()) {
-                filepool.put(line, file);
-            }
-        }
-        return filepool;
-    }
 
 
-    public List<File> mapMinus(Map<String, File> fromA,
-                               Map<String, File> substractB) {
 
-        List<File> difference = new ArrayList<>();
+    public List<SyncFile> mapMinus(Map<String, SyncFile> fromA,
+                                   Map<String, SyncFile> substractB) {
+
+        List<SyncFile> difference = new ArrayList<>();
         Iterator iterator = fromA.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
             String key = (String) entry.getKey();
 
-            File file = fromA.get(key);
+            SyncFile file = fromA.get(key);
 
 
             if (fromA.containsKey(key) && !substractB.containsKey(key)) {
@@ -120,4 +88,51 @@ public class Tools {
         }
         return difference;
     }
+
+
+    public StringBuilder stringListToSb(List<String> list) {
+        StringBuilder sb = new StringBuilder();
+
+        for (String line : list) {
+            sb.append(line + "\n");
+        }
+        return sb;
+    }
+
+    /**
+     * Write sb to file at path .
+     *
+     * @param path <i>String</i>
+     * @param sb   <i>StringBuilder</i>
+     */
+    public void writeSbToFile(String path,
+                              StringBuilder sb) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
+            bw.write(sb.toString());
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Write List of String to file at path .
+     *
+     * @param path <i>String</i>
+     * @param list <i>StringBuilder</i>
+     */
+    public void writeStringListToFile(String path,
+                                      List<String> list) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
+            StringBuilder sb = stringListToSb(list);
+            bw.write(sb.toString());
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

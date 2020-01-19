@@ -29,6 +29,7 @@ Sync files across directories.
 
 ### Issues <a name="issues"></a> 
 
+- Have Map entries be remove, once file ops is performed.
 - Create a parallel Thread for each SyncEnity.
 - Add support for modification dates. 
   - And thereby eventually support 10 out of 10 file operation types.
