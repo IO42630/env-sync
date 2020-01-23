@@ -772,7 +772,7 @@ loop</panel_attributes>
       <h>160</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
-comprison &gt;=</panel_attributes>
+comparison &gt;=</panel_attributes>
     <additional_attributes>10.0;110.0;10.0;140.0;120.0;140.0;120.0;10.0</additional_attributes>
   </element>
   <element>
@@ -856,7 +856,7 @@ bg=gray</panel_attributes>
       <h>160</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
-comprison &gt;=</panel_attributes>
+comparison &gt;=</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;140.0;180.0;140.0;180.0;110.0</additional_attributes>
   </element>
 </diagram>
