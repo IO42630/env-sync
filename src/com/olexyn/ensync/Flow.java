@@ -38,7 +38,7 @@ public class Flow {
             String stateFilePath = syncDirectory.stateFilePath(path);
             
             if (new File(stateFilePath).exists()) {
-                syncDirectory.readStateFile(syncDirectory.path);
+                syncDirectory.readStateFile();
             } else {
                 syncDirectory.writeStateFile(path);
             }
@@ -53,11 +53,11 @@ public class Flow {
 
                 String path = syncDirectory.path;
 
-                    syncDirectory.readState(path);
+                    syncDirectory.readState();
 
-                    syncDirectory.makeListCreated(path);
-                    syncDirectory.makeListDeleted(path);
-                    syncDirectory.makeListModified(path);
+                    syncDirectory.makeListCreated();
+                    syncDirectory.makeListDeleted();
+                    syncDirectory.makeListModified();
 
                     syncDirectory.doCreate();
                     syncDirectory.doDelete();

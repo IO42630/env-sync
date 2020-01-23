@@ -53,8 +53,8 @@ Sync files across directories.
     - To do so .listDeleted would need to be a field of Dir
     - And the .lists of every dir would need to be calculated before any deletion took place.
     - Check if the reduced reobustness is worth the prettier solution.
- - File is created in DirA
-    - Sync creates the file in DirB
+ - File is created in DirB
+    - Sync creates the file in DirA
     - Sync creates the file in DirB 
       - this means the file in DirB is overwritten with `cp` for no reason.
       - implement a check to prevent this.

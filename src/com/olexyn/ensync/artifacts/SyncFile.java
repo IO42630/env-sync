@@ -6,7 +6,8 @@ public class SyncFile extends File {
 
 
     // Very IMPORTANT field. Allows to store lastModified as it is stored in the StateFile.
-    private long lastModifiedOld = 0;
+    private long stateFileTime = 0;
+
 
 
     public SyncFile(String pathname) {
@@ -15,12 +16,16 @@ public class SyncFile extends File {
 
 
 
-    public long lastModifiedOld(){
-        return lastModifiedOld;
+    public long stateFileTime(){
+        return stateFileTime;
     }
 
-    public void setLastModifiedOld(long value){
-        lastModifiedOld = value;
+    public void setStateFileTime(long value){
+        stateFileTime = value;
     }
+
+
+
+
 
 }
