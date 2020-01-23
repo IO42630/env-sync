@@ -55,22 +55,27 @@ public class Flow {
 
                     syncDirectory.readState(path);
 
-                    List<SyncFile> listCreated = syncDirectory.makeListCreated(path);
-                    List<SyncFile> listDeleted = syncDirectory.makeListDeleted(path);
-                    List<SyncFile> listModified = syncDirectory.makeListModified(path);
+                    syncDirectory.makeListCreated(path);
+                    syncDirectory.makeListDeleted(path);
+                    syncDirectory.makeListModified(path);
 
-                    syncDirectory.doCreate(listCreated);
-                    syncDirectory.doDelete(listDeleted);
-                    syncDirectory.doModify(listModified);
+                    syncDirectory.doCreate();
+                    syncDirectory.doDelete();
+                    syncDirectory.doModify();
+
+
 
                     syncDirectory.writeStateFile(path);
 
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
 
-                    }
-                }}
+                }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+
+            }
+        }
     }
 }

@@ -79,11 +79,13 @@ public class Tools {
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
             String key = (String) entry.getKey();
+            //String path
 
-            SyncFile file = fromA.get(key);
+
 
 
             if (fromA.containsKey(key) && !substractB.containsKey(key)) {
+                SyncFile file = fromA.get(key);
                 difference.add(file);
             }
 
@@ -128,6 +130,14 @@ public class Tools {
      */
     public void writeStringListToFile(String path,
                                       List<String> list) {
+        File file = new File(path);
+        File parent = new File(file.getParent());
+        if (!parent.exists()){
+
+            x.execute(new String[]{"mkdir", "-p", parent.getPath()});
+        }
+
+
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
             StringBuilder sb = stringListToSb(list);

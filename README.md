@@ -37,3 +37,24 @@ Sync files across directories.
 - Have some error handling. (i.e. if a web-directory is not available)
 - Create a UI.
 - Start the program at system start.
+- Track files that were modified during the loop.
+    - currently `writeStateFile` just takes from `find`
+    - this means any changes made during the loop will be written to the `StateFile`
+    - and created files are tracked by comparing `StateFile` (=old state) and `State` (=new state).
+    - because of this it will appear as if the file created while the loop was running
+    was already there.
+    - thus the creation of said file will not be replicated to the other directories.
+    - to solve this `writeStateFile` should take the old `State` and manually add every operation that was performed by the loop (!= user created file while the loop was running).
+    - however this will be done later . . maybe.
+- If file is deleted in DirA and DirB, then two delete commands will be issued.
+    - They will both return errors and effectively do nothing.
+    - However this is a dirty solution.
+    - Fix this by checking if deleted file of DirA exists in DirB.listDeleted
+    - To do so .listDeleted would need to be a field of Dir
+    - And the .lists of every dir would need to be calculated before any deletion took place.
+    - Check if the reduced reobustness is worth the prettier solution.
+ - File is created in DirA
+    - Sync creates the file in DirB
+    - Sync creates the file in DirB 
+      - this means the file in DirB is overwritten with `cp` for no reason.
+      - implement a check to prevent this.

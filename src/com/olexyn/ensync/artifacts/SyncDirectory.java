@@ -13,9 +13,11 @@ public class SyncDirectory {
 
 
     private SyncEntity syncEntity;
-    public String path= null;
+    public String path = null;
 
-
+    public List<SyncFile> listCreated = new ArrayList<>();
+    public List<SyncFile> listDeleted = new ArrayList<>();
+    public List<SyncFile> listModified = new ArrayList<>();
 
 
     Tools tools = new Tools();
@@ -24,10 +26,10 @@ public class SyncDirectory {
     /**
      * Create a SyncDirectory from realPath.
      *
-
      * @see SyncEntity
      */
-    public SyncDirectory(String path , SyncEntity syncEntity) {
+    public SyncDirectory(String path,
+                         SyncEntity syncEntity) {
 
         this.path = path;
         this.syncEntity = syncEntity;
@@ -47,7 +49,9 @@ public class SyncDirectory {
         List<String> pathList = tools.brToListString(find.output);
 
         for (String filePath : pathList) {
-            filemap.put(filePath, new SyncFile(filePath));
+            SyncFile file = new SyncFile(filePath);
+
+            filemap.put(filePath, file);
         }
 
 
@@ -66,15 +70,15 @@ public class SyncDirectory {
 
         for (String line : lines) {
             // this is a predefined format: "modification-time path"
-            String modTimeString = line.split("")[0];
+            String modTimeString = line.split(" ")[0];
             long modTime = Long.parseLong(modTimeString);
 
-            String sFilePath = line.replace(modTimeString + "", "");
+            String sFilePath = line.replace(modTimeString + " ", "");
             SyncFile sfile = new SyncFile(sFilePath);
 
             sfile.setLastModifiedOld(modTime);
 
-            filemap.put(line, sfile);
+            filemap.put(sFilePath, sfile);
         }
 
         return filemap;
@@ -84,12 +88,16 @@ public class SyncDirectory {
 
     /**
      * Compare the OLD and NEW pools.
+     * List is cleared and created each time.
      *
      * @return
      */
-    public List<SyncFile> makeListCreated(String path) {
+    public void makeListCreated(String path) {
+        listCreated = new ArrayList<>();
+        Map<String, SyncFile> fromA = readState(path);
+        Map<String, SyncFile> substractB = readStateFile(path);
 
-        return tools.mapMinus(readState(path), readStateFile(path));
+        listCreated = tools.mapMinus(fromA, substractB);
     }
 
 
@@ -100,32 +108,39 @@ public class SyncDirectory {
 
     /**
      * Compare the OLD and NEW pools.
+     * List is cleared and created each time.
      *
      * @return
      */
-    public List<SyncFile> makeListDeleted(String path)  {
+    public void makeListDeleted(String path) {
+        listDeleted = new ArrayList<>();
+        Map<String, SyncFile> fromA = readStateFile(path);
+        Map<String, SyncFile> substractB = readState(path);
 
 
-        return tools.mapMinus(readStateFile(path), readState(path));
+        listDeleted = tools.mapMinus(fromA, substractB);
     }
 
 
     /**
      * Compare the OLD and NEW pools.
+     * List is cleared and created each time.
      *
      * @return
      */
-    public List<SyncFile> makeListModified(String path) {
+    public void makeListModified(String path) {
 
-        List<SyncFile> listModified = new ArrayList<>();
+        listModified = new ArrayList<>();
         Map<String, SyncFile> oldMap = readStateFile(path);
 
         for (Map.Entry<String, SyncFile> newFileEntry : readState(path).entrySet()) {
             // If KEY exists in OLD , thus FILE was NOT created.
             String newFileKey = newFileEntry.getKey();
-            SyncFile newFile = newFileEntry.getValue();
+
+
             if (oldMap.containsKey(newFileKey)) {
 
+                SyncFile newFile = newFileEntry.getValue();
                 long lastModifiedNew = newFile.lastModified();
 
 
@@ -136,7 +151,7 @@ public class SyncDirectory {
                 }
             }
         }
-        return listModified;
+
     }
 
 
@@ -146,7 +161,6 @@ public class SyncDirectory {
      */
     public void writeStateFile(String path) {
         List<String> outputList = new ArrayList<>();
-
 
 
         Execute.TwoBr find = x.execute(new String[]{"find",
@@ -164,7 +178,7 @@ public class SyncDirectory {
     }
 
 
-    public void doCreate(List<SyncFile> listCreated){
+    public void doCreate() {
 
 
         for (File createdFile : listCreated) {
@@ -198,8 +212,7 @@ public class SyncDirectory {
     }
 
 
-
-    public void doDelete(List<SyncFile> listDeleted){
+    public void doDelete() {
 
         for (File deletedFile : listDeleted) {
 
@@ -220,12 +233,52 @@ public class SyncDirectory {
 
     }
 
-    public void doModify(List<SyncFile> listModified) {
+    public void doModify() {
+
+        for (SyncFile modifiedFile : this.listModified) {
+
+            if (modifiedFile.isFile()) {
+
+                for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+                    SyncDirectory otherSyncDirectory = otherEntry.getValue();
+
+                    if (!this.equals(otherSyncDirectory)) {
+
+                        String relativePath = modifiedFile.getPath().replace(this.path, "");
 
 
+                        String otherFilePath = otherSyncDirectory.path + relativePath;
+                        SyncFile otherFile = new SyncFile(otherFilePath);
+
+                        if (otherFile.exists()) {
+                            if (modifiedFile.lastModified() > otherFile.lastModified()) {
+                                // IF both Files exist, and this File NEWER -> UPDATE the other File
+                                String[] cmd = new String[]{"cp",
+                                                            modifiedFile.getPath(),
+                                                            otherFilePath};
+                                x.execute(cmd);
+                            }
+                        } else {
+                            // IF other file does NOT exist -> UPDATE (i.e. create) the other File
+                            String[] cmd = new String[]{"mkdir",
+                                                        "-p",
+                                                        otherFilePath};
+                            x.execute(cmd);
+
+                            cmd = new String[]{"cp",
+                                               modifiedFile.getPath(),
+                                               otherFilePath};
+                            x.execute(cmd);
+                        }
 
 
+                    }
 
+
+                }
+            }
+
+        }
     }
 
 
