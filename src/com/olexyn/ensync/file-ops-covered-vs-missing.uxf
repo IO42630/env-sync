@@ -767,13 +767,13 @@ loop</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>1380</x>
-      <y>900</y>
+      <y>980</y>
       <w>140</w>
-      <h>70</h>
+      <h>160</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 comprison &gt;=</panel_attributes>
-    <additional_attributes>10.0;50.0;10.0;20.0;120.0;20.0;120.0;50.0</additional_attributes>
+    <additional_attributes>10.0;110.0;10.0;140.0;120.0;140.0;120.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLObject</id>
