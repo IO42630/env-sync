@@ -40,6 +40,9 @@ public class SyncMap {
         }
     }
 
+    public void removeDirectory(String realPath) {
+        syncDirectories.remove(realPath);
+    }
 
 
 

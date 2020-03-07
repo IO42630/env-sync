@@ -9,16 +9,12 @@ import java.util.Map;
 public class Flow {
 
 
-    public Flow(){
-
-    }
 
 
 
 
     public void start() {
-        File asdf = new File("/home/user/");
-        System.out.println(asdf.lastModified());
+
 
         Tools tools = new Tools();
         Execute x = new Execute();
@@ -76,4 +72,6 @@ public class Flow {
             }
         }
     }
+
+
 }

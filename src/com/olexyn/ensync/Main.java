@@ -1,5 +1,8 @@
 package com.olexyn.ensync;
 
+import com.olexyn.ensync.artifacts.Sync;
+import com.olexyn.ensync.artifacts.SyncMap;
+import com.olexyn.ensync.ui.UI;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -13,33 +16,25 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 
-public class Main extends Application {
+public class Main extends UI {
+
+
+
+    public static Sync sync = new Sync();
 
 
 
 
-
-
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("layout.fxml"));
-        Scene scene = new Scene(root, 500, 500);
-
-
-
-
-
-        primaryStage.setTitle("EnSync");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
 
 
 
 
     public static void main(String[] args) {
-        launch(args);
+
+        sync.syncMaps.put("test", new SyncMap("test"));
+
+
+        UI.main(args);
 
     }
 }
