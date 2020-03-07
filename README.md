@@ -14,20 +14,23 @@ Sync files across directories.
 
 ### Package Contents <a name="package-contents"></a> 
 
-| File         | Description |
+| Path         | Comment |
 |---------------|-------------|
-| artifacts/SyncDirectory | A directory that is registered to a SyncEntity.|
-| artifacts/SyncEntity | A collection of directories that are being syncronized.|
-| shell/ | Contains .sh files |
-| Execute       | Issues sh commands.|
-| Main          | Run from here.|
-| Routines      | Contains higher level routines.|
-| Tools         | Contains lower level tools that are used by other classes.|
+doc | Diagrams.
+src.com.olexyn.ensync.artifacts | Data Model: Maps, Directories, Files. 
+src.com.olexyn.ensync.shell | .sh files to ease interaction with the host.
+src.com.olexyn.ensync.ui | JavaFX.
+src.com.olexyn.ensync.Execute       | Issue .sh commands.
+src.com.olexyn.ensync.Main          | Run from here.
+src.com.olexyn.ensync.Flow      | Flow of the synchronization.
+src.com.olexyn.ensync. | Low level helper methods.
 
 <br>
 <br>
 
 ### Issues <a name="issues"></a> 
+
+##### High Prio
 
 - Have Map entries be remove, once file ops is performed.
 - Create a parallel Thread for each SyncEnity.
@@ -46,6 +49,9 @@ Sync files across directories.
     - thus the creation of said file will not be replicated to the other directories.
     - to solve this `writeStateFile` should take the old `State` and manually add every operation that was performed by the loop (!= user created file while the loop was running).
     - however this will be done later . . maybe.
+
+      
+##### Medium Prio
 - If file is deleted in DirA and DirB, then two delete commands will be issued.
     - They will both return errors and effectively do nothing.
     - However this is a dirty solution.
@@ -58,3 +64,6 @@ Sync files across directories.
     - Sync creates the file in DirB 
       - this means the file in DirB is overwritten with `cp` for no reason.
       - implement a check to prevent this.
+      
+      
+##### Low Prio
