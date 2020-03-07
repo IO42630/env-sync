@@ -6,46 +6,42 @@ import com.olexyn.ensync.artifacts.SyncMap;
 import java.io.File;
 import java.util.Map;
 
-public class Flow {
+public class Flow implements Runnable{
 
 
 
 
 
 
-    public void start() {
+    public void run() {
 
 
-        Tools tools = new Tools();
-        Execute x = new Execute();
 
 
-        SyncMap syncMap = new SyncMap("test");
-        syncMap.addDirectory("/home/user/test/a");
-        syncMap.addDirectory("/home/user/test/b");
-        //syncMap.addDirectory("/home/user/test/c");
+
+        for (Map.Entry<String, SyncMap> mapEntry : Main.sync.syncMaps.entrySet()) {
 
 
-        for (Map.Entry<String, SyncDirectory> entry : syncMap.syncDirectories.entrySet()) {
-            SyncDirectory syncDirectory = entry.getValue();
-            String path = syncDirectory.path;
-            String stateFilePath = syncDirectory.stateFilePath(path);
-            
-            if (new File(stateFilePath).exists()) {
-                syncDirectory.readStateFile();
-            } else {
-                syncDirectory.writeStateFile(path);
-            }
-        }
-
-
-        while (true) {
-
-            for (Map.Entry<String, SyncDirectory> entry : syncMap.syncDirectories.entrySet()) {
-
+            for (Map.Entry<String, SyncDirectory> entry : mapEntry.getValue().syncDirectories.entrySet()) {
                 SyncDirectory syncDirectory = entry.getValue();
-
                 String path = syncDirectory.path;
+                String stateFilePath = syncDirectory.stateFilePath(path);
+
+                if (new File(stateFilePath).exists()) {
+                    syncDirectory.readStateFile();
+                } else {
+                    syncDirectory.writeStateFile(path);
+                }
+            }
+
+
+            while (true) {
+
+                for (Map.Entry<String, SyncDirectory> entry : mapEntry.getValue().syncDirectories.entrySet()) {
+
+                    SyncDirectory syncDirectory = entry.getValue();
+
+                    String path = syncDirectory.path;
 
                     syncDirectory.readState();
 
@@ -58,20 +54,19 @@ public class Flow {
                     syncDirectory.doModify();
 
 
-
                     syncDirectory.writeStateFile(path);
-
 
 
                 }
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
+                try {
+                    System.out.println("Pausing...");
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
 
+                }
             }
         }
     }
-
 
 }

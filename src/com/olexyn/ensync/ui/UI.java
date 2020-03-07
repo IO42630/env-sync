@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class UI extends Application {
+public class UI extends Application implements Runnable {
 
 
 
@@ -29,11 +29,11 @@ public class UI extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
-        UI.launch(args);
 
+
+
+    @Override
+    public void run() {
+        UI.launch();
     }
-
-
-
 }

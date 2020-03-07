@@ -127,6 +127,7 @@ public class Controller implements Initializable {
 
         nodeList.addAll(gridPane.getChildren());
 
+        //TODO fix ConcurrentModificationException. This will possibly resolve further errors.
 
         for (Node node : nodeList) {
 

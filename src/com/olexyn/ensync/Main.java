@@ -16,12 +16,15 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 
-public class Main extends UI {
+public class Main{
 
 
 
-    public static Sync sync = new Sync();
+    final public static Sync sync = new Sync();
 
+    final private static Flow flow = new Flow();
+
+    final private static UI ui = new UI();
 
 
 
@@ -34,7 +37,22 @@ public class Main extends UI {
         sync.syncMaps.put("test", new SyncMap("test"));
 
 
-        UI.main(args);
+        Thread uiThread = new Thread(ui, "ui");
+        uiThread.start();
+
+
+        Thread flowThread = new Thread(flow, "flow");
+        flowThread.start();
+
+
+
+
+
+
 
     }
+
+
+
+
 }
