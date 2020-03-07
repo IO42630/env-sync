@@ -1,7 +1,6 @@
 package com.olexyn.ensync;
 
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -9,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 
@@ -24,8 +24,6 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -39,22 +37,23 @@ public class Controller implements Initializable {
         addDirButton.setOnAction(event -> { this.addDir();});
 
         gridPane.add(directoryField, 0, 0);
-        gridPane.add(addDirButton, 1, 0);
+        gridPane.add(new Text(""), 1, 0);
+        gridPane.add(new Text(""), 2, 0);
+        gridPane.add(new Text(""), 3, 0);
+        gridPane.add(addDirButton, 4, 0);
 
 
     }
 
 
-    @FXML
-    protected AnchorPane anchor;
+
 
     @FXML
     protected GridPane gridPane;
 
 
-
     protected void addDir() {
-        Window stage = anchor.getScene().getWindow();
+        Window stage = gridPane.getScene().getWindow();
 
         final DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Select Directory.");
@@ -68,20 +67,20 @@ public class Controller implements Initializable {
             pathTextField.setText(dir.getAbsolutePath());
             pathTextField.setDisable(true);
 
+            TextField stateTextField = new TextField();
+            stateTextField.setText("STATE");
+
+            stateTextField.setStyle("-fx-text-fill: green");
+            stateTextField.setDisable(true);
+
 
             Button removeButton = new Button("Remove");
-            removeButton.setId("removeButton"+ dir.getAbsolutePath());
-
-
+            removeButton.setId("removeButton" + dir.getAbsolutePath());
 
 
             List<Node> nodeList = new ArrayList<>();
 
             nodeList.addAll(gridPane.getChildren());
-
-
-
-
 
 
             for (Node node : nodeList) {
@@ -90,6 +89,9 @@ public class Controller implements Initializable {
                     int i = nodeList.indexOf(node);
 
                     nodeList.add(i, removeButton);
+                    nodeList.add(i, new Text(""));
+                    nodeList.add(i, stateTextField);
+                    nodeList.add(i, new Text(""));
                     nodeList.add(i, pathTextField);
                     break;
                 }
@@ -100,17 +102,16 @@ public class Controller implements Initializable {
             int col = 0;
             int row = 0;
 
-            for(Node node : nodeList){
+            for (Node node : nodeList) {
 
-                gridPane.add(node, col,row);
+                gridPane.add(node, col, row);
                 col++;
-                if (nodeList.indexOf(node)%2==1){
+                if (nodeList.indexOf(node) % 5 == 4) {
                     row++;
-                    col=0;
+                    col = 0;
                 }
 
             }
-
 
 
         }
