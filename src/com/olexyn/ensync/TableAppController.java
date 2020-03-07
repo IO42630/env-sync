@@ -1,5 +1,6 @@
 package com.olexyn.ensync;
 
+import com.olexyn.ensync.artifacts.SyncDirectory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,15 +33,13 @@ public class TableAppController implements Initializable {
     private TextField salaryTextField;
     @FXML
     private Button submitButton;
-    private ObservableList<PersonTableData> data = FXCollections
 
-            .observableArrayList();
+    private ObservableList<PersonTableData> data = FXCollections.observableArrayList();
+
     @FXML
-
     private TableColumn<PersonTableData, Date> dateOfBirthColumn;
 
     @FXML
-
     private TableColumn<PersonTableData, Double> salaryColumn;
 
     @Override
@@ -60,22 +59,24 @@ public class TableAppController implements Initializable {
 
     }
 
-    private List<Person> retrieveData() {
+    private List<SyncDirectory> retrieveData() {
 
         try {
+            SyncDirectory sd1 = new SyncDirectory("Dan", "Newton", DATE_FORMATTER.parse("06/01/1994"), "Java Developer", 22000);
+            SyncDirectory sd2 = new SyncDirectory("George", "Newton", DATE_FORMATTER.parse("24/01/1995"), "Bro", 15021);
+            return Arrays.asList(sd1, sd2);
 
-            return Arrays.asList(new Person("Dan", "Newton", DATE_FORMATTER.parse("06/01/1994"), "Java Developer", 22000), new Person("George", "Newton", DATE_FORMATTER.parse("24/01/1995"), "Bro", 15021), new Person("Laura", "So", DATE_FORMATTER.parse("24/04/1995"), "Student", 0), new Person("Jamie", "Harwood", DATE_FORMATTER.parse("15/12/9999"), "Java Developer", 30000), new Person("Michael", "Collins", DATE_FORMATTER.parse("01/01/0001"), "Developer", 299), new Person("Stuart", "Kerrigan", DATE_FORMATTER.parse("06/10/1894"), "Teaching Fellow", 100000));
         } catch (ParseException e) {
 
             e.printStackTrace();
 
         }
 
-        return new ArrayList<Person>();
+        return new ArrayList<SyncDirectory>();
 
     }
 
-    private void populate(final List<Person> people) {
+    private void populate(final List<SyncDirectory> people) {
 
         people.forEach(p -> data.add(new PersonTableData(p)));
 
@@ -117,23 +118,16 @@ public class TableAppController implements Initializable {
 
         salaryColumn.setCellFactory(
 
-                EditCell.<PersonTableData, Double>forTableColumn(
-
-                        new MyDoubleStringConverter()));
+                EditCell.<PersonTableData, Double>forTableColumn(new MyDoubleStringConverter()));
 
         // updates the salary field on the com.olexyn.ensync.PersonTableData object to the
 
         // committed value
 
         salaryColumn.setOnEditCommit(event -> {
+            final Double value = event.getNewValue() != null ? event.getNewValue() : event.getOldValue();
 
-            final Double value = event.getNewValue() != null ?
-
-                    event.getNewValue() : event.getOldValue();
-
-            ((PersonTableData) event.getTableView().getItems()
-
-                    .get(event.getTablePosition().getRow())).setSalary(value);
+            ((PersonTableData) event.getTableView().getItems().get(event.getTablePosition().getRow())).setSalary(value);
 
             table.refresh();
 
@@ -188,19 +182,15 @@ public class TableAppController implements Initializable {
     }
 
     @SuppressWarnings("unchecked")
-
     private void editFocusedCell() {
 
-        final TablePosition<PersonTableData, ?> focusedCell = table
-
-                .focusModelProperty().get().focusedCellProperty().get();
+        final TablePosition<PersonTableData, ?> focusedCell = table.focusModelProperty().get().focusedCellProperty().get();
 
         table.edit(focusedCell.getRow(), focusedCell.getTableColumn());
 
     }
 
     @SuppressWarnings("unchecked")
-
     private void selectPrevious() {
 
         if (table.getSelectionModel().isCellSelectionEnabled()) {
@@ -209,27 +199,17 @@ public class TableAppController implements Initializable {
 
             // right-to-left, and then wrapping to the end of the previous line
 
-            TablePosition<PersonTableData, ?> pos = table.getFocusModel()
-
-                    .getFocusedCell();
+            TablePosition<PersonTableData, ?> pos = table.getFocusModel().getFocusedCell();
 
             if (pos.getColumn() - 1 >= 0) {
 
                 // go to previous row
-
-                table.getSelectionModel().select(pos.getRow(),
-
-                                                 getTableColumn(pos.getTableColumn(), -1));
+                table.getSelectionModel().select(pos.getRow(), getTableColumn(pos.getTableColumn(), -1));
 
             } else if (pos.getRow() < table.getItems().size()) {
 
                 // wrap to end of previous row
-
-                table.getSelectionModel().select(pos.getRow() - 1,
-
-                                                 table.getVisibleLeafColumn(
-
-                                                         table.getVisibleLeafColumns().size() - 1));
+                table.getSelectionModel().select(pos.getRow() - 1, table.getVisibleLeafColumn(table.getVisibleLeafColumns().size() - 1));
 
             }
 
@@ -264,7 +244,6 @@ public class TableAppController implements Initializable {
     }
 
     @FXML
-
     private void submit(final ActionEvent event) {
 
         if (allFieldsValid()) {

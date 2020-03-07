@@ -4,15 +4,18 @@ import com.olexyn.ensync.Execute;
 import com.olexyn.ensync.Tools;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SyncDirectory {
 
+    private String firstName;
+    private String surname;
+    private Date date;
+    private String occupation;
+    private double salary;
 
-    private SyncEntity syncEntity;
+
+    private SyncMap syncMap;
     public String path = null;
 
     public List<SyncFile> listCreated = new ArrayList<>();
@@ -26,13 +29,22 @@ public class SyncDirectory {
     /**
      * Create a SyncDirectory from realPath.
      *
-     * @see SyncEntity
+     * @see SyncMap
      */
     public SyncDirectory(String path,
-                         SyncEntity syncEntity) {
+                         SyncMap syncMap) {
 
         this.path = path;
-        this.syncEntity = syncEntity;
+        this.syncMap = syncMap;
+
+    }
+
+    public SyncDirectory(String firstName, String surname, Date date, String occupation, double salary){
+        this.firstName = firstName;
+        this.surname = surname;
+        this.date = date;
+        this.occupation = occupation;
+        this.salary = salary;
 
     }
 
@@ -240,7 +252,7 @@ public class SyncDirectory {
 
             if (createdFile.isFile()) {
 
-                for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+                for (Map.Entry<String, SyncDirectory> otherEntry : syncMap.syncDirectories.entrySet()) {
                     SyncDirectory otherSyncDirectory = otherEntry.getValue();
 
                     if (!this.equals(otherSyncDirectory)) {
@@ -263,7 +275,7 @@ public class SyncDirectory {
         for (SyncFile deletedFile : listDeleted) {
 
 
-            for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+            for (Map.Entry<String, SyncDirectory> otherEntry : syncMap.syncDirectories.entrySet()) {
                 SyncDirectory otherSyncDirectory = otherEntry.getValue();
 
                 if (!this.equals(otherSyncDirectory)) {
@@ -292,7 +304,7 @@ public class SyncDirectory {
 
             if (modifiedFile.isFile()) {
 
-                for (Map.Entry<String, SyncDirectory> otherEntry : syncEntity.syncDirectories.entrySet()) {
+                for (Map.Entry<String, SyncDirectory> otherEntry : syncMap.syncDirectories.entrySet()) {
                     SyncDirectory otherSyncDirectory = otherEntry.getValue();
 
                     if (!this.equals(otherSyncDirectory)) {
@@ -329,4 +341,28 @@ public class SyncDirectory {
         }
     }
 
+
+    public double getSalary(){
+        return 0.0;
+    }
+
+    public Date getDateOfBirth(){
+        return null;
+    }
+
+    public String getFirstName(){
+        return "firstName";
+    }
+
+    public String getSurname(){
+        return "surname";
+    }
+
+    public String getOccupation(){
+        return "occupation";
+    }
+
+
 }
+
+

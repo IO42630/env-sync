@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A SyncEntity is a collection of SyncDirectories,
+ * A SyncMap is a collection of SyncDirectories,
  * that are supposed to be kept in sync.
  */
-public class SyncEntity {
+public class SyncMap {
 
     public String name;
     public int syncInterval = 3600;
@@ -20,16 +20,16 @@ public class SyncEntity {
     Tools tools = new Tools();
 
     /**
-     * @see SyncEntity
+     * @see SyncMap
      */
-    public SyncEntity(String name) {
+    public SyncMap(String name) {
         this.name = name;
     }
 
     /**
      * Creates a new Syncdirectory.
      * <p>
-     * Adds the created SyncDirectory to this SyncEntity.
+     * Adds the created SyncDirectory to this SyncMap.
      *
      * @param realPath the path from which the Syncdirectory is created.
      * @see SyncDirectory

@@ -1,5 +1,6 @@
 package com.olexyn.ensync;
 
+import com.olexyn.ensync.artifacts.SyncDirectory;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,7 +22,7 @@ public class PersonTableData {
 
     // added to create the model from the Person object, which might be data retrieved from a database
 
-    public PersonTableData(Person person) {
+    public PersonTableData(SyncDirectory person) {
 
         this.firstName = new SimpleStringProperty(person.getFirstName());
 

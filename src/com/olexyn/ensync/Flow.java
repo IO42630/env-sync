@@ -1,11 +1,9 @@
 package com.olexyn.ensync;
 
 import com.olexyn.ensync.artifacts.SyncDirectory;
-import com.olexyn.ensync.artifacts.SyncEntity;
-import com.olexyn.ensync.artifacts.SyncFile;
+import com.olexyn.ensync.artifacts.SyncMap;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 public class Flow {
@@ -26,13 +24,13 @@ public class Flow {
         Execute x = new Execute();
 
 
-        SyncEntity syncEntity = new SyncEntity("test");
-        syncEntity.addDirectory("/home/user/test/a");
-        syncEntity.addDirectory("/home/user/test/b");
-        //syncEntity.addDirectory("/home/user/test/c");
+        SyncMap syncMap = new SyncMap("test");
+        syncMap.addDirectory("/home/user/test/a");
+        syncMap.addDirectory("/home/user/test/b");
+        //syncMap.addDirectory("/home/user/test/c");
 
 
-        for (Map.Entry<String, SyncDirectory> entry : syncEntity.syncDirectories.entrySet()) {
+        for (Map.Entry<String, SyncDirectory> entry : syncMap.syncDirectories.entrySet()) {
             SyncDirectory syncDirectory = entry.getValue();
             String path = syncDirectory.path;
             String stateFilePath = syncDirectory.stateFilePath(path);
@@ -47,7 +45,7 @@ public class Flow {
 
         while (true) {
 
-            for (Map.Entry<String, SyncDirectory> entry : syncEntity.syncDirectories.entrySet()) {
+            for (Map.Entry<String, SyncDirectory> entry : syncMap.syncDirectories.entrySet()) {
 
                 SyncDirectory syncDirectory = entry.getValue();
 
