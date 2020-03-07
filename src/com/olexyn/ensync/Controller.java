@@ -1,4 +1,4 @@
-package com.olexyn.ensync.ui;
+package com.olexyn.ensync;
 
 
 import javafx.concurrent.Task;
