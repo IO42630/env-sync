@@ -1,92 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.*?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.olexyn.ensync.TableAppController">
+
+<AnchorPane fx:id="anchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.olexyn.ensync.Controller">
     <children>
         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="400.0" prefWidth="600.0">
             <content>
-                <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab text="SyncMap 1">
-                            <content>
-                                <GridPane>
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                    </rowConstraints>
-                                    <children>
-                                        <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2147483647">
-                                            <columns>
-                                                <TableColumn prefWidth="98.0" text="First Name">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="firstName"/>
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn prefWidth="111.0" text="Surname">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="surname"/>
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn fx:id="dateOfBirthColumn" prefWidth="99.0" text="Date of Birth">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="dateOfBirth"/>
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn prefWidth="106.0" text="Occupation">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="occupation"/>
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                                <TableColumn fx:id="salaryColumn" prefWidth="84.0" text="Salary">
-                                                    <cellValueFactory>
-                                                        <PropertyValueFactory property="salary"/>
-                                                    </cellValueFactory>
-                                                </TableColumn>
-                                            </columns>
-                                        </TableView>
-                                        <AnchorPane GridPane.rowIndex="2" VBox.vgrow="ALWAYS">
-                                            <children>
-                                                <GridPane layoutX="14.0" prefHeight="146.0" prefWidth="333.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0">
-                                                    <columnConstraints>
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="85.0"/>
-                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="507.0" minWidth="10.0" prefWidth="248.0"/>
-                                                    </columnConstraints>
-                                                    <rowConstraints>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                                    </rowConstraints>
-                                                    <children>
-                                                        <Label text="First Name"/>
-                                                        <Label text="Surname" GridPane.rowIndex="1"/>
-                                                        <Label text="Date of Birth" GridPane.rowIndex="2"/>
-                                                        <Label text="Occupation" GridPane.rowIndex="3"/>
-                                                        <Label text="Salary" GridPane.rowIndex="4"/>
-                                                        <TextField fx:id="firstNameTextField" GridPane.columnIndex="1"/>
-                                                        <TextField fx:id="surnameTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                                                        <TextField fx:id="dateOfBirthTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                                                        <TextField fx:id="occupationTextField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                                                        <TextField fx:id="salaryTextField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                                                    </children>
-                                                </GridPane>
-                                                <Button fx:id="submitButton" layoutX="371.0" layoutY="2.0" mnemonicParsing="false" onAction="#submit" text="Submit" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="371.0"/>
-                                            </children>
-                                        </AnchorPane>
-                                    </children>
-                                </GridPane>
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
+                <GridPane fx:id="gridPane">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+                    </rowConstraints>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+                </GridPane>
             </content>
         </ScrollPane>
     </children>
