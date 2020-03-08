@@ -33,7 +33,7 @@ public class Controller implements Initializable {
 
         Button addDirButton = new Button("Add");
         addDirButton.setId("addDirButton");
-        addDirButton.setOnAction(event -> { this.addDir();});
+        addDirButton.setOnAction(event -> { this.addDirectory();});
 
         gridPane.add(directoryField, 0, 0);
         gridPane.add(new Text(""), 1, 0);
@@ -49,7 +49,7 @@ public class Controller implements Initializable {
     protected GridPane gridPane;
 
 
-    protected void addDir() {
+    protected void addDirectory() {
         Window stage = gridPane.getScene().getWindow();
 
         final DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -73,7 +73,7 @@ public class Controller implements Initializable {
 
             Button removeButton = new Button("Remove");
             removeButton.setId("removeButton" + dir.getAbsolutePath());
-            removeButton.setOnAction(event -> { this.rmDir(removeButton.getId());});
+            removeButton.setOnAction(event -> { this.removeDirectory(removeButton.getId());});
 
 
             List<Node> nodeList = new ArrayList<>();
@@ -118,10 +118,8 @@ public class Controller implements Initializable {
     }
 
 
-    private void rmDir(String id) {
-        String path = id.replace("removeButton", "");
+    private void removeDirectory(String id) {
 
-        Main.sync.syncMaps.get("test").removeDirectory(path);
 
         List<Node> nodeList = new ArrayList<>();
 
@@ -155,6 +153,21 @@ public class Controller implements Initializable {
             }
 
         }
+
+
+        String path = id.replace("removeButton", "");
+        while(true){
+            if (Main.flowThread.getState().equals(Thread.State.TIMED_WAITING)){
+                try {
+                    Main.flowThread.wait();
+                } catch (InterruptedException e){
+                    Main.sync.syncMaps.get("test").removeDirectory(path);
+                    Main.flowThread.notify();
+                    break;
+                }
+            }
+        }
+
 
     }
 

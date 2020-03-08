@@ -10,7 +10,7 @@ public class Flow implements Runnable{
 
 
 
-
+    private String state;
 
 
     public void run() {
@@ -20,14 +20,16 @@ public class Flow implements Runnable{
 
 
         for (Map.Entry<String, SyncMap> mapEntry : Main.sync.syncMaps.entrySet()) {
+            SyncMap syncMap = mapEntry.getValue();
+            state = syncMap.toString();
 
-
-            for (Map.Entry<String, SyncDirectory> entry : mapEntry.getValue().syncDirectories.entrySet()) {
+            for (Map.Entry<String, SyncDirectory> entry : syncMap.syncDirectories.entrySet()) {
                 SyncDirectory syncDirectory = entry.getValue();
                 String path = syncDirectory.path;
                 String stateFilePath = syncDirectory.stateFilePath(path);
 
                 if (new File(stateFilePath).exists()) {
+                    state = "READ-STATE-FILE-"+
                     syncDirectory.readStateFile();
                 } else {
                     syncDirectory.writeStateFile(path);
@@ -43,6 +45,7 @@ public class Flow implements Runnable{
 
                     String path = syncDirectory.path;
 
+                    state = "READ";
                     syncDirectory.readState();
 
                     syncDirectory.makeListCreated();
@@ -57,11 +60,13 @@ public class Flow implements Runnable{
                     syncDirectory.writeStateFile(path);
 
 
+
+
                 }
 
                 try {
                     System.out.println("Pausing...");
-                    Thread.sleep(1000);
+                    Main.flowThread.sleep(2000);
                 } catch (InterruptedException e) {
 
                 }
@@ -69,4 +74,8 @@ public class Flow implements Runnable{
         }
     }
 
+
+    public String getState() {
+        return state==null ? "NONE" : state;
+    }
 }

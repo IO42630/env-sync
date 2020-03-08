@@ -22,11 +22,11 @@ public class Main{
 
     final public static Sync sync = new Sync();
 
-    final private static Flow flow = new Flow();
-
-    final private static UI ui = new UI();
 
 
+    final public static Thread uiThread = new Thread(new UI(), "ui");
+
+    final public static Thread flowThread = new Thread(new Flow(), "flow");
 
 
 
@@ -37,11 +37,9 @@ public class Main{
         sync.syncMaps.put("test", new SyncMap("test"));
 
 
-        Thread uiThread = new Thread(ui, "ui");
+
         uiThread.start();
 
-
-        Thread flowThread = new Thread(flow, "flow");
         flowThread.start();
 
 
