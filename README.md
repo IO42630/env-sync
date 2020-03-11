@@ -9,7 +9,7 @@
 ### About <a name="about"></a> 
 Sync files across directories.
 
-![alt text](https://github.com/IO42630/ensync/tree/master/doc/flow-n-instances.png "Hello!")
+![alt text](https://raw.githubusercontent.com/IO42630/ensync/master/doc/flow-n-instances.png "Hello!")
 <br>
 <br>
 
