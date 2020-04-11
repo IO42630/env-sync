@@ -29,7 +29,7 @@ halign=left</panel_attributes>
     <coordinates>
       <x>860</x>
       <y>870</y>
-      <w>190</w>
+      <w>230</w>
       <h>30</h>
     </coordinates>
     <panel_attributes>addDirectoryButton
@@ -245,5 +245,40 @@ fg=red</panel_attributes>
     </coordinates>
     <panel_attributes>fg=red</panel_attributes>
     <additional_attributes>10.0;40.0;40.0;10.0;300.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>310</x>
+      <y>870</y>
+      <w>130</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>
+halign=left</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>860</x>
+      <y>840</y>
+      <w>230</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>addDirectoryTextField
+fg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>430</x>
+      <y>840</y>
+      <w>450</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>fg=red</panel_attributes>
+    <additional_attributes>10.0;40.0;40.0;10.0;430.0;10.0</additional_attributes>
   </element>
 </diagram>
