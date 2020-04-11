@@ -28,28 +28,49 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
-        TextField directoryField = new TextField();
-        directoryField.setId("directoryField");
+        Button newCollectionButton = new Button("New Collection");
+        newCollectionButton.setId("newCollectionButton");
+        newCollectionButton.setOnAction(event -> { this.newCollection();});
 
-        Button addDirButton = new Button("Add");
-        addDirButton.setId("addDirButton");
-        addDirButton.setOnAction(event -> { this.addDirectory();});
 
-        gridPane.add(directoryField, 0, 0);
+
+        TextField addDirectoryTextField = new TextField();
+        addDirectoryTextField.setId("addDirectoryTextField");
+
+        Button addDirectoryButton = new Button("Add Directory");
+        addDirectoryButton.setId("addDirectoryButton");
+        addDirectoryButton.setOnAction(event -> { this.addDirectory();});
+
+        gridPane.add(addDirectoryTextField, 0, 0);
         gridPane.add(new Text(""), 1, 0);
         gridPane.add(new Text(""), 2, 0);
         gridPane.add(new Text(""), 3, 0);
-        gridPane.add(addDirButton, 4, 0);
+        gridPane.add(addDirectoryButton, 4, 0);
 
 
     }
+
+
+    private void newCollection(){
+        /*
+            TODO copy old init here, redraw.
+         */
+    }
+
 
 
     @FXML
     protected GridPane gridPane;
 
 
-    protected void addDirectory() {
+
+
+
+
+    /**
+     *
+     */
+    private void addDirectory() {
         Window stage = gridPane.getScene().getWindow();
 
         final DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -59,71 +80,80 @@ public class Controller implements Initializable {
         File dir = directoryChooser.showDialog(stage);
 
         if (dir != null) {
-            TextField pathTextField = new TextField();
-            pathTextField.setText(dir.getAbsolutePath());
-            pathTextField.setDisable(true);
+            TextField directoryPathTextField = new TextField();
+            directoryPathTextField.setText(dir.getAbsolutePath());
+            directoryPathTextField.setDisable(true);
 
             // TODO for now there is only one SyncMap "test".
             Main.SYNC.get("test").addDirectory(dir.getAbsolutePath());
 
-            TextField stateTextField = new TextField();
-            stateTextField.setText("STATE");
-            stateTextField.setStyle("-fx-text-fill: green");
-            stateTextField.setDisable(true);
+            TextField directoryStateTextField = new TextField();
+            directoryStateTextField.setText("STATE");
+            directoryStateTextField.setStyle("-fx-text-fill: green");
+            directoryStateTextField.setDisable(true);
 
-            Button removeButton = new Button("Remove");
-            removeButton.setId("removeButton" + dir.getAbsolutePath());
-            removeButton.setOnAction(event -> { this.removeDirectory(removeButton.getId());});
-
-
-            List<Node> nodeList = new ArrayList<>();
-
-            nodeList.addAll(gridPane.getChildren());
+            Button removeDirectoryButton = new Button("Remove");
+            removeDirectoryButton.setId("removeDirectoryButton-" + dir.getAbsolutePath());
+            removeDirectoryButton.setOnAction(event -> { this.removeDirectory(removeDirectoryButton.getId());});
 
 
-            for (Node node : nodeList) {
-
-                if (node.getId() != null && node.getId().equals("directoryField")) {
-                    int i = nodeList.indexOf(node);
-
-                    nodeList.add(i, removeButton);
-                    nodeList.add(i, new Text(""));
-                    nodeList.add(i, stateTextField);
-                    nodeList.add(i, new Text(""));
-                    nodeList.add(i, pathTextField);
-                    break;
-                }
-            }
-
-            gridPane.getChildren().clear();
-
-            int col = 0;
-            int row = 0;
-
-            for (Node node : nodeList) {
-
-                gridPane.add(node, col, row);
-                col++;
-                if (nodeList.indexOf(node) % 5 == 4) {
-                    row++;
-                    col = 0;
-                }
-
-            }
-
-
+            List<Node> nodeList = new ArrayList<>(gridPane.getChildren());
+            insertRow(nodeList, directoryPathTextField, directoryStateTextField, removeDirectoryButton);
+            redraw(gridPane, nodeList);
         }
 
 
+    }
+
+    /**
+     * Find the addDirectoryTextField.
+     * Insert the cells of the new row starting from the last cell.
+     * This pushes the addDirectoryTextField forward.
+     */
+    private void insertRow(List<Node> nodeList, TextField path , TextField state, Button button){
+        for (Node node : nodeList) {
+
+            if (node.getId() != null && node.getId().equals("addDirectoryTextField")) {
+                int i = nodeList.indexOf(node);
+
+                nodeList.add(i, button);
+                nodeList.add(i, new Text(""));
+                nodeList.add(i, state);
+                nodeList.add(i, new Text(""));
+                nodeList.add(i, path);
+                break;
+            }
+        }
+    }
+
+
+
+    /**
+     * Clear the gridPane and redraw it with contents of nodeList.
+     */
+    private void redraw(GridPane gridPane, List<Node> nodeList){
+        gridPane.getChildren().clear();
+
+        int col = 0;
+        int row = 0;
+
+        for (Node node : nodeList) {
+
+            gridPane.add(node, col, row);
+            col++;
+            if (nodeList.indexOf(node) % 5 == 4) {
+                row++;
+                col = 0;
+            }
+
+        }
     }
 
 
     private void removeDirectory(String id) {
 
 
-        List<Node> nodeList = new ArrayList<>();
-
-        nodeList.addAll(gridPane.getChildren());
+        List<Node> nodeList = new ArrayList<>(gridPane.getChildren());
 
         //TODO fix ConcurrentModificationException. This will possibly resolve further errors.
 
