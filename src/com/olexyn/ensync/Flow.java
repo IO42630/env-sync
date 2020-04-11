@@ -17,31 +17,18 @@ public class Flow implements Runnable{
 
 
 
+        initialize();
 
 
-        for (Map.Entry<String, SyncMap> mapEntry : Main.sync.syncMaps.entrySet()) {
-            SyncMap syncMap = mapEntry.getValue();
-            state = syncMap.toString();
 
-            for (Map.Entry<String, SyncDirectory> entry : syncMap.syncDirectories.entrySet()) {
-                SyncDirectory syncDirectory = entry.getValue();
-                String path = syncDirectory.path;
-                String stateFilePath = syncDirectory.stateFilePath(path);
-
-                if (new File(stateFilePath).exists()) {
-                    state = "READ-STATE-FILE-"+
-                    syncDirectory.readStateFile();
-                } else {
-                    syncDirectory.writeStateFile(path);
-                }
-            }
+        for (var syncMapEntry : Main.SYNC.entrySet()) {
 
 
             while (true) {
 
-                for (Map.Entry<String, SyncDirectory> entry : mapEntry.getValue().syncDirectories.entrySet()) {
+                for (var syncDirectoryEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
 
-                    SyncDirectory syncDirectory = entry.getValue();
+                    SyncDirectory syncDirectory = syncDirectoryEntry.getValue();
 
                     String path = syncDirectory.path;
 
@@ -56,18 +43,14 @@ public class Flow implements Runnable{
                     syncDirectory.doDelete();
                     syncDirectory.doModify();
 
-
                     syncDirectory.writeStateFile(path);
-
-
-
 
                 }
 
                 try {
                     System.out.println("Pausing...");
-                    Main.flowThread.sleep(2000);
-                } catch (InterruptedException e) {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ignored) {
 
                 }
             }
@@ -77,5 +60,30 @@ public class Flow implements Runnable{
 
     public String getState() {
         return state==null ? "NONE" : state;
+    }
+
+
+    /**
+     * For every single SyncDirectory try to read it's StateFile. <p>
+     * If the StateFile is missing, then create a StateFile.
+     */
+    private void initialize(){
+        for (var syncMapEntry : Main.SYNC.entrySet()) {
+            SyncMap syncMap = syncMapEntry.getValue();
+            state = syncMap.toString();
+
+            for (var stringSyncDirectoryEntry : syncMap.syncDirectories.entrySet()) {
+                SyncDirectory syncDirectory = stringSyncDirectoryEntry.getValue();
+                String path = syncDirectory.path;
+                String stateFilePath = syncDirectory.stateFilePath(path);
+
+                if (new File(stateFilePath).exists()) {
+                    state = "READ-STATE-FILE-" + syncDirectory.readStateFile();
+                } else {
+                    syncDirectory.writeStateFile(path);
+                }
+            }
+
+        }
     }
 }

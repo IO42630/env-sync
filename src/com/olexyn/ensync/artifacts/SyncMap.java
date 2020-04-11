@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A SyncMap is a collection of SyncDirectories,
- * that are supposed to be kept in sync.
+ * What is a SyncMap?
+ * A SyncDirectory is an occurrence of a particular directory somewhere across the filesystems.
+ * A SyncMap is the set of such SyncDirectories. The purpose of the SyncMap is to help syncronize the SyncDirectories.
  */
 public class SyncMap {
 
@@ -27,11 +28,10 @@ public class SyncMap {
     }
 
     /**
-     * Creates a new Syncdirectory.
-     * <p>
+     * Creates a new Syncdirectory. <p>
      * Adds the created SyncDirectory to this SyncMap.
      *
-     * @param realPath the path from which the Syncdirectory is created.
+     * @param realPath the path from which the SyncDirectory is created.
      * @see SyncDirectory
      */
     public void addDirectory(String realPath) {
@@ -43,10 +43,6 @@ public class SyncMap {
     public void removeDirectory(String realPath) {
         syncDirectories.remove(realPath);
     }
-
-
-
-
 
 
 }

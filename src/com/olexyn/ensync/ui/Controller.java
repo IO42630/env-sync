@@ -64,7 +64,7 @@ public class Controller implements Initializable {
             pathTextField.setDisable(true);
 
             // TODO for now there is only one SyncMap "test".
-            Main.sync.syncMaps.get("test").addDirectory(dir.getAbsolutePath());
+            Main.SYNC.get("test").addDirectory(dir.getAbsolutePath());
 
             TextField stateTextField = new TextField();
             stateTextField.setText("STATE");
@@ -161,7 +161,7 @@ public class Controller implements Initializable {
                 try {
                     Main.flowThread.wait();
                 } catch (InterruptedException e){
-                    Main.sync.syncMaps.get("test").removeDirectory(path);
+                    Main.SYNC.get("test").removeDirectory(path);
                     Main.flowThread.notify();
                     break;
                 }

@@ -111,7 +111,6 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      *
-     * @return
      */
     public void makeListDeleted() {
         listDeleted = new ArrayList<>();
@@ -127,7 +126,6 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      *
-     * @return
      */
     public void makeListModified() {
 
