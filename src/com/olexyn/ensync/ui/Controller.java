@@ -32,7 +32,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        Text end = new Text("end");
+        Text end = new Text("");
         end.setId("end");
 
         Button newCollectionButton = new Button("New Collection");
@@ -46,7 +46,7 @@ public class Controller implements Initializable {
         List<Node> payload = Arrays.asList(new Text(""), new Text(""), new Text(""), new Text(""), newCollectionButton);
 
 
-        insertPayload(nodeList, payload, "", 0);
+        insertPayload(nodeList, payload, "end", 0);
         redraw(gridPane, nodeList);
 
 
