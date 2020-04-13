@@ -1,9 +1,15 @@
 ### Table of Contents
+1. [Demo](#demo)
 1. [About](#about)
 4. [Package Contents](#package-contents)
 5. [Issues](#issues)
 
 <br>
+<br>
+
+### Demo<a name="demo"></a> 
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/cjoVE7d1JXY "ensync WIP Demo")
+
 <br>
 
 ### About <a name="about"></a> 
