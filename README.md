@@ -8,7 +8,7 @@
 <br>
 
 ### Demo<a name="demo"></a> 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/cjoVE7d1JXY "ensync WIP Demo")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/cjoVE7d1JXY/0.jpg)](https://youtu.be/cjoVE7d1JXY "ensync WIP Demo")
 
 <br>
 
