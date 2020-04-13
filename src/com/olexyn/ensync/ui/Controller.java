@@ -1,7 +1,6 @@
 package com.olexyn.ensync.ui;
 
 
-import com.olexyn.ensync.Main;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -28,6 +27,10 @@ public class Controller implements Initializable {
     final static int COLUMN_COUNT = 5; // How many columns should the GridPane have? Adjust if necessary.
     final static Text SPACE = new Text(""); // Placeholder
     int collection_count = 0;
+    Bridge bridge = new Bridge();
+
+    @FXML
+    protected GridPane gridPane;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -53,13 +56,13 @@ public class Controller implements Initializable {
     }
 
 
-
-
-
-
     private void newCollection() {
 
+
+
         String collectionName = "name" + collection_count++;
+
+        bridge.newCollection(collectionName);
 
 
         TextField collectionStateTextField = new TextField();
@@ -85,45 +88,43 @@ public class Controller implements Initializable {
         List<Node> payload = new ArrayList<>();
         payload.addAll(Arrays.asList(new Text(""), new Text(""), collectionStateTextField, new Text(""), removeCollectionButton));
         payload.addAll(Arrays.asList(addDirectoryTextField, new Text(""), new Text(""), new Text(""), addDirectoryButton));
+
         insertPayload(nodeList, payload, "newCollectionButton", -4);
         redraw(gridPane, nodeList);
     }
 
 
-    @FXML
-    protected GridPane gridPane;
 
+
+    /**
+     * For the order & number of Nodes see ui-design.png .
+     * Remove the "Remove-Collection-Line" and the consecutive lines until and including the "Add-Directory-Line".
+     * The !=null expression protects from Text("") placeholders, who have id==null.
+     */
     private void removeCollection(String collectionName) {
+
+        bridge.removeCollection(collectionName);
+
         List<Node> nodeList = new ArrayList<>(gridPane.getChildren());
 
-
-        here : for (Node node : nodeList) {
+        here:
+        for (Node node : nodeList) {
 
             if (node.getId() != null && node.getId().equals("removeCollectionButton-" + collectionName)) {
                 int i = nodeList.indexOf(node) - 4;
-                while (i<nodeList.size()) {
+                while (i < nodeList.size()) {
                     nodeList.remove(i);
 
-
-                if (nodeList.get(i).getId() != null &&  nodeList.get(i).getId().equals("addDirectoryButton-" + collectionName)){
-                    nodeList.remove(i);
-                    break here;
-                }
+                    if (nodeList.get(i).getId() != null && nodeList.get(i).getId().equals("addDirectoryButton-" + collectionName)) {
+                        nodeList.remove(i);
+                        break here;
+                    }
                 }
 
             }
         }
 
-        redraw(gridPane,nodeList);
-    }
-
-
-    private List<Node> fillBlanks() {
-        List<Node> out = new ArrayList<>();
-
-
-        return out;
-
+        redraw(gridPane, nodeList);
     }
 
 
@@ -138,26 +139,28 @@ public class Controller implements Initializable {
         directoryChooser.setTitle("Select Directory.");
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
-        File dir = directoryChooser.showDialog(stage);
+        File directory = directoryChooser.showDialog(stage);
 
-        if (dir != null) {
+        if (directory != null) {
+
+            bridge.addDirectory(collectionName, directory);
+
             TextField directoryPathTextField = new TextField();
-            directoryPathTextField.setText(dir.getAbsolutePath());
+            directoryPathTextField.setText(directory.getAbsolutePath());
             directoryPathTextField.setDisable(true);
-            directoryPathTextField.setId("directoryPathTextField-" + dir.getAbsolutePath());
+            directoryPathTextField.setId("directoryPathTextField-" + directory.getAbsolutePath());
 
-            // TODO for now there is only one SyncMap "test".
-            // Main.SYNC.get("test").addDirectory(dir.getAbsolutePath());
+
 
             TextField directoryStateTextField = new TextField();
             directoryStateTextField.setText("STATE");
             directoryStateTextField.setStyle("-fx-text-fill: green");
             directoryStateTextField.setDisable(true);
-            directoryStateTextField.setId("directoryStateTextField-" + dir.getAbsolutePath());
+            directoryStateTextField.setId("directoryStateTextField-" + directory.getAbsolutePath());
 
             Button removeDirectoryButton = new Button("Remove");
-            removeDirectoryButton.setId("removeDirectoryButton-" + dir.getAbsolutePath());
-            removeDirectoryButton.setOnAction(event -> { this.removeDirectory(removeDirectoryButton.getId());});
+            removeDirectoryButton.setId("removeDirectoryButton-" + directory.getAbsolutePath());
+            removeDirectoryButton.setOnAction(event -> { this.removeDirectory(directory.getAbsolutePath());});
 
 
             List<Node> nodeList = new ArrayList<>(gridPane.getChildren());
@@ -196,32 +199,28 @@ public class Controller implements Initializable {
     private void redraw(GridPane gridPane, List<Node> nodeList) {
         gridPane.getChildren().clear();
 
-        int col = 0;
-        int row = 0;
+        int col = 0, row = 0;
 
         for (Node node : nodeList) {
-            if ((nodeList.indexOf(node) + 0) % COLUMN_COUNT == 0) {
+            if (nodeList.indexOf(node) % COLUMN_COUNT == 0) {
                 row++;
                 col = 0;
             }
             gridPane.add(node, col, row);
             col++;
-
-
         }
     }
 
 
-    private void removeDirectory(String id) {
+    private void removeDirectory(String directoryAbsolutePath) {
 
+        bridge.removeDirectory(directoryAbsolutePath);
 
         List<Node> nodeList = new ArrayList<>(gridPane.getChildren());
 
-        //TODO fix ConcurrentModificationException. This will possibly resolve further errors.
-
         for (Node node : nodeList) {
 
-            if (node.getId() != null && node.getId().equals(id)) {
+            if (node.getId() != null && node.getId().equals("removeDirectoryButton-" +directoryAbsolutePath)) {
                 int i = nodeList.indexOf(node) - 4;
                 for (int j = 0; j < 5; j++) {
                     nodeList.remove(i);
@@ -229,39 +228,10 @@ public class Controller implements Initializable {
                 break;
             }
         }
-
-        redraw(gridPane,nodeList);
-
-        /*
-        String path = id.replace("removeButton", "");
-        while (true) {
-            if (Main.flowThread.getState().equals(Thread.State.TIMED_WAITING)) {
-                try {
-                    Main.flowThread.wait();
-                } catch (InterruptedException e) {
-                    Main.SYNC.get("test").removeDirectory(path);
-                    Main.flowThread.notify();
-                    break;
-                }
-            }
-        }
-
-         */
-
-
+        redraw(gridPane, nodeList);
     }
 
 
 }
 
- class Placeholder extends Text{
-    static int count =0;
 
-    Placeholder(String label, String name){
-
-        super(label);
-        this.setId("placeholder-"+name+"-"+count++);
-
-    }
-
-}

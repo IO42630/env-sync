@@ -4,10 +4,8 @@ import com.olexyn.ensync.artifacts.SyncDirectory;
 import com.olexyn.ensync.artifacts.SyncMap;
 
 import java.io.File;
-import java.util.Map;
 
-public class Flow implements Runnable{
-
+public class Flow implements Runnable {
 
 
     private String state;
@@ -17,14 +15,13 @@ public class Flow implements Runnable{
 
 
 
-        initialize();
 
+        while (true) {
 
+            initialize();
 
-        for (var syncMapEntry : Main.SYNC.entrySet()) {
+            for (var syncMapEntry : Main.SYNC.entrySet()) {
 
-
-            while (true) {
 
                 for (var syncDirectoryEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
 
@@ -47,19 +44,21 @@ public class Flow implements Runnable{
 
                 }
 
-                try {
-                    System.out.println("Pausing...");
-                    Thread.sleep(2000);
-                } catch (InterruptedException ignored) {
 
-                }
             }
+            try {
+                System.out.println("Pausing...");
+                Thread.sleep(2000);
+            } catch (InterruptedException ignored) {
+
+            }
+
         }
     }
 
 
     public String getState() {
-        return state==null ? "NONE" : state;
+        return state == null ? "NONE" : state;
     }
 
 
@@ -67,7 +66,7 @@ public class Flow implements Runnable{
      * For every single SyncDirectory try to read it's StateFile. <p>
      * If the StateFile is missing, then create a StateFile.
      */
-    private void initialize(){
+    private void initialize() {
         for (var syncMapEntry : Main.SYNC.entrySet()) {
             SyncMap syncMap = syncMapEntry.getValue();
             state = syncMap.toString();
