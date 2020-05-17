@@ -21,9 +21,9 @@ public class SyncDirectory {
     private SyncMap syncMap;
     public String path = null;
 
-    public List<SyncFile> listCreated = new ArrayList<>();
-    public List<SyncFile> listDeleted = new ArrayList<>();
-    public List<SyncFile> listModified = new ArrayList<>();
+    public Map<String, SyncFile> listCreated = new HashMap<>();
+    public Map<String, SyncFile> listDeleted = new HashMap<>();
+    public Map<String, SyncFile> listModified = new HashMap<>();
 
 
     Tools tools = new Tools();
@@ -115,9 +115,7 @@ public class SyncDirectory {
         Map<String, SyncFile> substractB = readFreshState();
 
         listDeleted = tools.mapMinus(fromA, substractB);
-
-
-
+        
     }
 
 
@@ -125,9 +123,9 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      */
-    public List<SyncFile> makeListModified() {
+    public Map<String, SyncFile> makeListModified() {
 
-        listModified = new ArrayList<>();
+        listModified.clear();
         Map<String, SyncFile> stateFileMap = readStateFile();
 
         for (var freshFileEntry : readFreshState().entrySet()) {
@@ -141,7 +139,7 @@ public class SyncDirectory {
             if (stateFileMap.containsKey(freshFileKey)) {
 
                 if (freshFile.getTimeModified() > freshFile.getTimeModifiedFromStateFile()) {
-                    listModified.add(freshFile);
+                    listModified.put(freshFileKey, freshFile);
                 }
             }
         }
@@ -206,7 +204,8 @@ public class SyncDirectory {
 
     public void doCreate() {
 
-        for (SyncFile createdFile : listCreated) {
+        for (var entry : listCreated.entrySet()) {
+            SyncFile createdFile = entry.getValue();
 
             for (var otherEntry : syncMap.syncDirectories.entrySet()) {
                 SyncDirectory otherSD = otherEntry.getValue();
@@ -226,7 +225,8 @@ public class SyncDirectory {
      */
     public void doDelete() {
 
-        for (SyncFile deletedFile : listDeleted) {
+        for (var entry: listDeleted.entrySet()) {
+            SyncFile deletedFile = entry.getValue();
 
             for (var otherEntry : syncMap.syncDirectories.entrySet()) {
                 SyncDirectory otherSD = otherEntry.getValue();
@@ -255,7 +255,8 @@ public class SyncDirectory {
 
     public void doModify() {
 
-        for (SyncFile modifiedFile : this.listModified) {
+        for (var entry : listModified.entrySet()) {
+            SyncFile modifiedFile = entry.getValue();
 
             for (var otherEntry : syncMap.syncDirectories.entrySet()) {
                 SyncDirectory otherSD = otherEntry.getValue();

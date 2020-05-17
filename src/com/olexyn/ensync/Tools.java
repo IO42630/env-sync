@@ -6,7 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +17,6 @@ public class Tools {
     public Tools() {
         x = new Execute();
     }
-
-
-
 
 
     /**
@@ -54,8 +51,6 @@ public class Tools {
     }
 
 
-
-
     public List<String> fileToLines(File file) {
         String filePath = file.getPath();
         List<String> lines = null;
@@ -68,27 +63,16 @@ public class Tools {
     }
 
 
+    public Map<String, SyncFile> mapMinus(Map<String, SyncFile> fromA, Map<String, SyncFile> substractB) {
 
-
-
-    public List<SyncFile> mapMinus(Map<String, SyncFile> fromA,
-                                   Map<String, SyncFile> substractB) {
-
-        List<SyncFile> difference = new ArrayList<>();
-        Iterator iterator = fromA.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String key = (String) entry.getKey();
-            //String path
-
-
-
+        Map<String, SyncFile> difference = new HashMap<>();
+        for (Map.Entry<String, SyncFile> entry : fromA.entrySet()) {
+            String key = entry.getKey();
 
             if (fromA.containsKey(key) && !substractB.containsKey(key)) {
                 SyncFile file = fromA.get(key);
-                difference.add(file);
+                difference.put(key, file);
             }
-
 
         }
         return difference;
@@ -110,8 +94,7 @@ public class Tools {
      * @param path <i>String</i>
      * @param sb   <i>StringBuilder</i>
      */
-    public void writeSbToFile(String path,
-                              StringBuilder sb) {
+    public void writeSbToFile(String path, StringBuilder sb) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(path)));
             bw.write(sb.toString());
@@ -128,13 +111,14 @@ public class Tools {
      * @param path <i>String</i>
      * @param list <i>StringBuilder</i>
      */
-    public void writeStringListToFile(String path,
-                                      List<String> list) {
+    public void writeStringListToFile(String path, List<String> list) {
         File file = new File(path);
         File parent = new File(file.getParent());
-        if (!parent.exists()){
+        if (!parent.exists()) {
 
-            x.execute(new String[]{"mkdir", "-p", parent.getPath()});
+            x.execute(new String[]{"mkdir",
+                                   "-p",
+                                   parent.getPath()});
         }
 
 
