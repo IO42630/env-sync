@@ -17,7 +17,7 @@ public class Main{
 
     final public static Thread FLOW_THREAD = new Thread(new Flow(), "flow");
 
-    final public static HashMap<String, SyncMap> SYNC = new HashMap<>();
+    final public static HashMap<String, SyncMap> MAP_OF_SYNCMAPS = new HashMap<>();
 
 
 

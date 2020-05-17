@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * What is a SyncMap?
- * A SyncDirectory is an occurrence of a particular directory somewhere across the filesystems.
+ *
  * A SyncMap is the set of such SyncDirectories. The purpose of the SyncMap is to help syncronize the SyncDirectories.
  */
 public class SyncMap {

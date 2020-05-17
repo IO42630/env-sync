@@ -6,6 +6,9 @@ import com.olexyn.ensync.Tools;
 import java.io.File;
 import java.util.*;
 
+/**
+ * A SyncDirectory is an occurrence of a particular directory somewhere across the filesystems.
+ */
 public class SyncDirectory {
 
     private String flowState;
@@ -39,9 +42,10 @@ public class SyncDirectory {
 
 
     /**
-     * NOTE that the SFile().lastModifiedOld is not set here, so it is 0 by default.
+     * Get the current state by using the `find` command.
      */
-    public Map<String, SyncFile> readState() {
+    public Map<String, SyncFile> findState() {
+        //NOTE that the SFile().lastModifiedOld is not set here, so it is 0 by default.
         Map<String, SyncFile> filemap = new HashMap<>();
 
         Execute.TwoBr find = x.execute(new String[]{"find",
@@ -95,7 +99,7 @@ public class SyncDirectory {
      */
     public void makeListCreated() {
         listCreated = new ArrayList<>();
-        Map<String, SyncFile> fromA = readState();
+        Map<String, SyncFile> fromA = findState();
         Map<String, SyncFile> substractB = readStateFile();
 
         listCreated = tools.mapMinus(fromA, substractB);
@@ -115,7 +119,7 @@ public class SyncDirectory {
     public void makeListDeleted() {
         listDeleted = new ArrayList<>();
         Map<String, SyncFile> fromA = readStateFile();
-        Map<String, SyncFile> substractB = readState();
+        Map<String, SyncFile> substractB = findState();
 
 
         listDeleted = tools.mapMinus(fromA, substractB);
@@ -132,7 +136,7 @@ public class SyncDirectory {
         listModified = new ArrayList<>();
         Map<String, SyncFile> oldMap = readStateFile();
 
-        for (Map.Entry<String, SyncFile> newFileEntry : readState().entrySet()) {
+        for (Map.Entry<String, SyncFile> newFileEntry : findState().entrySet()) {
             // If KEY exists in OLD , thus FILE was NOT created.
             String newFileKey = newFileEntry.getKey();
 

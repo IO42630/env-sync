@@ -4,8 +4,12 @@ import com.olexyn.ensync.artifacts.SyncDirectory;
 import com.olexyn.ensync.artifacts.SyncMap;
 
 import java.io.File;
+import static com.olexyn.ensync.Main.MAP_OF_SYNCMAPS;
 
 public class Flow implements Runnable {
+
+
+
 
 
     private String state;
@@ -14,38 +18,38 @@ public class Flow implements Runnable {
     public void run() {
 
 
-
-
         while (true) {
 
-            initialize();
 
-            for (var syncMapEntry : Main.SYNC.entrySet()) {
+            synchronized (MAP_OF_SYNCMAPS) {
+                readOrMakeStateFile();
+
+                for (var syncMapEntry : MAP_OF_SYNCMAPS.entrySet()) {
 
 
-                for (var syncDirectoryEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
+                    for (var syncDirectoryEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
 
-                    SyncDirectory syncDirectory = syncDirectoryEntry.getValue();
+                        SyncDirectory syncDirectory = syncDirectoryEntry.getValue();
 
-                    String path = syncDirectory.path;
+                        state = "READ";
+                        syncDirectory.findState();
 
-                    state = "READ";
-                    syncDirectory.readState();
+                        syncDirectory.makeListCreated();
+                        syncDirectory.makeListDeleted();
+                        syncDirectory.makeListModified();
 
-                    syncDirectory.makeListCreated();
-                    syncDirectory.makeListDeleted();
-                    syncDirectory.makeListModified();
+                        syncDirectory.doCreate();
+                        syncDirectory.doDelete();
+                        syncDirectory.doModify();
 
-                    syncDirectory.doCreate();
-                    syncDirectory.doDelete();
-                    syncDirectory.doModify();
+                        syncDirectory.writeStateFile(syncDirectory.path);
+                    }
 
-                    syncDirectory.writeStateFile(path);
 
                 }
-
-
             }
+
+
             try {
                 System.out.println("Pausing...");
                 Thread.sleep(2000);
@@ -66,8 +70,8 @@ public class Flow implements Runnable {
      * For every single SyncDirectory try to read it's StateFile. <p>
      * If the StateFile is missing, then create a StateFile.
      */
-    private void initialize() {
-        for (var syncMapEntry : Main.SYNC.entrySet()) {
+    private void readOrMakeStateFile() {
+        for (var syncMapEntry : MAP_OF_SYNCMAPS.entrySet()) {
             SyncMap syncMap = syncMapEntry.getValue();
             state = syncMap.toString();
 

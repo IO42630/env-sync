@@ -13,8 +13,6 @@ public class UI extends Application implements Runnable {
 
 
 
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("layout.fxml"));
