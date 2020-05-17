@@ -135,6 +135,8 @@ public class SyncDirectory {
             String freshFileKey = freshFileEntry.getKey();
             SyncFile freshFile = freshFileEntry.getValue();
 
+            if(freshFile.isDirectory()){ continue;} // no need to modify Directories, the Filesystem will do that, if a File changed.
+
             // If KEY exists in OLD , thus FILE was NOT created.
             if (stateFileMap.containsKey(freshFileKey)) {
 
