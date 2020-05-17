@@ -115,7 +115,24 @@ public class SyncDirectory {
         Map<String, SyncFile> substractB = readFreshState();
 
         listDeleted = tools.mapMinus(fromA, substractB);
-        
+
+        Map<String, SyncFile> swap = new HashMap<>();
+
+
+        for (var entry : listDeleted.entrySet()) {
+
+            String key = entry.getKey();
+            String parentKey = entry.getValue().getParent();
+
+
+            if (listDeleted.containsKey(parentKey) || swap.containsKey(parentKey)) {
+                swap.put(key, listDeleted.get(key));
+            }
+        }
+
+        listDeleted = tools.mapMinus(listDeleted, swap);
+
+
     }
 
 
@@ -133,7 +150,7 @@ public class SyncDirectory {
             String freshFileKey = freshFileEntry.getKey();
             SyncFile freshFile = freshFileEntry.getValue();
 
-            if(freshFile.isDirectory()){ continue;} // no need to modify Directories, the Filesystem will do that, if a File changed.
+            if (freshFile.isDirectory()) { continue;} // no need to modify Directories, the Filesystem will do that, if a File changed.
 
             // If KEY exists in OLD , thus FILE was NOT created.
             if (stateFileMap.containsKey(freshFileKey)) {
@@ -193,11 +210,6 @@ public class SyncDirectory {
             this.otherParentFile = new File(otherParentPath);
 
 
-
-
-
-
-
         }
     }
 
@@ -225,7 +237,7 @@ public class SyncDirectory {
      */
     public void doDelete() {
 
-        for (var entry: listDeleted.entrySet()) {
+        for (var entry : listDeleted.entrySet()) {
             SyncFile deletedFile = entry.getValue();
 
             for (var otherEntry : syncMap.syncDirectories.entrySet()) {
@@ -241,7 +253,7 @@ public class SyncDirectory {
         }
     }
 
-    private void deleteFile(Info info, SyncDirectory thisSD, SyncFile thisFile, SyncDirectory otherSD){
+    private void deleteFile(Info info, SyncDirectory thisSD, SyncFile thisFile, SyncDirectory otherSD) {
 
         SyncFile otherFile = new SyncFile(otherSD, otherSD.path + thisFile.relativePath);
 
@@ -296,7 +308,6 @@ public class SyncDirectory {
             x.execute(cmd);
         }
     }
-
 
 
 }
