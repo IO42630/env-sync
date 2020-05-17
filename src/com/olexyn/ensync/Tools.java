@@ -148,4 +148,7 @@ public class Tools {
         }
     }
 
+    public String stateFilePath(String path) {
+        return "/tmp/ensync/state" + path.replace("/", "-");
+    }
 }

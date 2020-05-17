@@ -29,8 +29,8 @@ public class Execute {
 
     public void executeBatch(List<String[]> batch){
 
-        for (int i =0; i<batch.size();i++){
-            execute(batch.get(i));
+        for (String[] strings : batch) {
+            execute(strings);
         }
 
     }

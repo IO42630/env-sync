@@ -4,7 +4,10 @@ import com.olexyn.ensync.Execute;
 import com.olexyn.ensync.Tools;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A SyncDirectory is an occurrence of a particular directory somewhere across the filesystems.
@@ -30,15 +33,12 @@ public class SyncDirectory {
      *
      * @see SyncMap
      */
-    public SyncDirectory(String path,
-                         SyncMap syncMap) {
+    public SyncDirectory(String path, SyncMap syncMap) {
 
         this.path = path;
         this.syncMap = syncMap;
 
     }
-
-
 
 
     /**
@@ -54,7 +54,7 @@ public class SyncDirectory {
         List<String> pathList = tools.brToListString(find.output);
 
         for (String filePath : pathList) {
-            SyncFile file = new SyncFile(filePath);
+            SyncFile file = new SyncFile(this, filePath);
 
             filemap.put(filePath, file);
         }
@@ -71,7 +71,7 @@ public class SyncDirectory {
      */
     public Map<String, SyncFile> readStateFile() {
         Map<String, SyncFile> filemap = new HashMap<>();
-        List<String> lines = tools.fileToLines(new File(stateFilePath(path)));
+        List<String> lines = tools.fileToLines(new File(tools.stateFilePath(path)));
 
         for (String line : lines) {
             // this is a predefined format: "modification-time path"
@@ -79,7 +79,7 @@ public class SyncDirectory {
             long modTime = Long.parseLong(modTimeString);
 
             String sFilePath = line.replace(modTimeString + " ", "");
-            SyncFile sfile = new SyncFile(sFilePath);
+            SyncFile sfile = new SyncFile(this, sFilePath);
 
             sfile.setStateFileTime(modTime);
 
@@ -98,7 +98,6 @@ public class SyncDirectory {
      * @return
      */
     public void makeListCreated() {
-        listCreated = new ArrayList<>();
         Map<String, SyncFile> fromA = findState();
         Map<String, SyncFile> substractB = readStateFile();
 
@@ -106,21 +105,13 @@ public class SyncDirectory {
     }
 
 
-    public String stateFilePath(String path) {
-        return "/tmp/ensync/state" + path.replace("/", "-");
-    }
-
-
     /**
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
-     *
      */
     public void makeListDeleted() {
-        listDeleted = new ArrayList<>();
         Map<String, SyncFile> fromA = readStateFile();
         Map<String, SyncFile> substractB = findState();
-
 
         listDeleted = tools.mapMinus(fromA, substractB);
     }
@@ -129,24 +120,22 @@ public class SyncDirectory {
     /**
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
-     *
      */
-    public void makeListModified() {
+    public List<SyncFile> makeListModified() {
 
         listModified = new ArrayList<>();
         Map<String, SyncFile> oldMap = readStateFile();
 
-        for (Map.Entry<String, SyncFile> newFileEntry : findState().entrySet()) {
-            // If KEY exists in OLD , thus FILE was NOT created.
+        for (var newFileEntry : findState().entrySet()) {
+
             String newFileKey = newFileEntry.getKey();
 
-
+            // If KEY exists in OLD , thus FILE was NOT created.
             if (oldMap.containsKey(newFileKey)) {
 
                 SyncFile newFile = newFileEntry.getValue();
+
                 long lastModifiedNew = newFile.lastModified();
-
-
                 long lastModifiedOld = oldMap.get(newFileKey).stateFileTime();
 
                 if (lastModifiedNew > lastModifiedOld) {
@@ -154,7 +143,7 @@ public class SyncDirectory {
                 }
             }
         }
-
+        return listModified;
     }
 
 
@@ -177,26 +166,24 @@ public class SyncDirectory {
             outputList.add("" + lastModified + " " + filePath);
         }
 
-        tools.writeStringListToFile(stateFilePath(path), outputList);
+        tools.writeStringListToFile(tools.stateFilePath(path), outputList);
     }
 
 
     private class Info {
 
-        private String relativePath = null;
-        private String thisFilePath = null;
-        private String otherFilePath = null;
-        private File otherFile = null;
-        private String otherParentPath = null;
-        private File otherParentFile = null;
-        private long thisStateFileTime = 0;
-        private long thisTimeModified = 0;
-        private long otherTimeModified = 0;
+        private String relativePath;
+        private String thisFilePath;
+        private String otherFilePath;
+        private File otherFile;
+        private String otherParentPath;
+        private File otherParentFile;
+        private long thisStateFileTime;
+        private long thisFileTimeModified;
+        private long otherFileTimeModified;
 
 
-        private Info(SyncDirectory thisSD,
-                     SyncFile sFile,
-                     SyncDirectory otherSD) {
+        private Info(SyncDirectory thisSD, SyncFile sFile, SyncDirectory otherSD) {
             // Example:
             //  syncDirectory /foo
             //  otherSyncDirectory /bar
@@ -216,18 +203,18 @@ public class SyncDirectory {
                 // thisFile does not exist in StateFile, a value of 0 can be seen as equal to "never existed".
                 this.thisStateFileTime = 0;
             }
-            this.thisTimeModified = sFile.lastModified();
+            this.thisFileTimeModified = sFile.lastModified();
 
 
             if (otherFile.exists()) {
 
-                this.otherTimeModified = otherFile.lastModified();
+                this.otherFileTimeModified = otherFile.lastModified();
 
             } else {
                 if (otherSD.readStateFile().get(otherFilePath) != null) {
-                    this.otherTimeModified = otherSD.readStateFile().get(otherFilePath).stateFileTime();
+                    this.otherFileTimeModified = otherSD.readStateFile().get(otherFilePath).stateFileTime();
                 } else {
-                    this.otherTimeModified = 0;
+                    this.otherFileTimeModified = 0;
                 }
             }
 
@@ -243,15 +230,14 @@ public class SyncDirectory {
 
             if (createdFile.isFile()) {
 
-                for (Map.Entry<String, SyncDirectory> otherEntry : syncMap.syncDirectories.entrySet()) {
-                    SyncDirectory otherSyncDirectory = otherEntry.getValue();
+                for (var otherEntry : syncMap.syncDirectories.entrySet()) {
+                    SyncDirectory otherSD = otherEntry.getValue();
 
-                    if (!this.equals(otherSyncDirectory)) {
+                    if (this.equals(otherSD)) { continue; }
 
-                        Info info = new Info(this, createdFile, otherSyncDirectory);
+                    Info info = new Info(this, createdFile, otherSD);
 
-                        createFile(info);
-                    }
+                    writeFile(info, this, createdFile, otherSD);
                 }
             }
         }
@@ -265,24 +251,21 @@ public class SyncDirectory {
 
         for (SyncFile deletedFile : listDeleted) {
 
+            for (var otherEntry : syncMap.syncDirectories.entrySet()) {
+                SyncDirectory otherSD = otherEntry.getValue();
 
-            for (Map.Entry<String, SyncDirectory> otherEntry : syncMap.syncDirectories.entrySet()) {
-                SyncDirectory otherSyncDirectory = otherEntry.getValue();
+                if (this.equals(otherSD)) { continue; }
 
-                if (!this.equals(otherSyncDirectory)) {
+                Info info = new Info(this, deletedFile, otherSD);
+                if (info.otherFile.isFile()) {
 
-                    Info info = new Info(this, deletedFile, otherSyncDirectory);
-                    if (info.otherFile.isFile()) {
-
-                        // if the otherFile was created with ensync it will have the == TimeModified.
-                        if (info.thisStateFileTime >= info.otherTimeModified) {
-                            String[] cmd = new String[]{"rm",
-                                                        "-r",
-                                                        info.otherFilePath};
-                            x.execute(cmd);
-                        }
+                    // if the otherFile was created with ensync it will have the == TimeModified.
+                    if (info.thisStateFileTime >= info.otherFileTimeModified) {
+                        String[] cmd = new String[]{"rm",
+                                                    "-r",
+                                                    info.otherFilePath};
+                        x.execute(cmd);
                     }
-
                 }
             }
         }
@@ -295,19 +278,14 @@ public class SyncDirectory {
 
             if (modifiedFile.isFile()) {
 
-                for (Map.Entry<String, SyncDirectory> otherEntry : syncMap.syncDirectories.entrySet()) {
-                    SyncDirectory otherSyncDirectory = otherEntry.getValue();
+                for (var otherEntry : syncMap.syncDirectories.entrySet()) {
+                    SyncDirectory otherSD = otherEntry.getValue();
 
-                    if (!this.equals(otherSyncDirectory)) {
+                    if (this.equals(otherSD)) { continue; }
 
-                        Info info = new Info(this, modifiedFile, otherSyncDirectory);
+                    Info info = new Info(this, modifiedFile, otherSD);
 
-
-                        createFile(info);
-
-
-                    }
-
+                    writeFile(info, this, modifiedFile, otherSD);
 
                 }
             }
@@ -316,8 +294,11 @@ public class SyncDirectory {
     }
 
 
-    private void createFile(Info info) {
-        if (!info.otherFile.exists() || info.thisTimeModified > info.otherTimeModified) {
+    private void writeFile(Info info, SyncDirectory thisSD, SyncFile thisFile, SyncDirectory otherSD) {
+
+        File otherFile = new File(otherSD.path + thisFile.relativePath);
+
+        if (!otherFile.exists() || info.thisFileTimeModified > info.otherFileTimeModified) {
             if (!info.otherParentFile.exists()) {
                 String[] cmd = new String[]{"mkdir",
                                             "-p",
@@ -333,11 +314,9 @@ public class SyncDirectory {
     }
 
 
-    public String flowState(){
+    public String flowState() {
         return flowState == null ? "NONE" : flowState;
     }
-
-
 
 
 }

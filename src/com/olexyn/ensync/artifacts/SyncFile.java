@@ -8,10 +8,16 @@ public class SyncFile extends File {
     // Very IMPORTANT field. Allows to store lastModified as it is stored in the StateFile.
     private long stateFileTime = 0;
 
+    public String relativePath;
+    private SyncDirectory sd;
 
 
-    public SyncFile(String pathname) {
+
+    public SyncFile(SyncDirectory sd , String pathname) {
+
         super(pathname);
+        this.sd = sd;
+        relativePath = this.getPath().replace(sd.path, "");
     }
 
 
@@ -25,7 +31,18 @@ public class SyncFile extends File {
     }
 
 
+    public long getFileTimeModified(SyncDirectory otherSD){
+        if (this.exists()){
+            return lastModified();
+        }
 
+        if (sd.readStateFile().get(this.getPath())!=null){
+
+        }
+
+
+        return  0;
+    }
 
 
 }

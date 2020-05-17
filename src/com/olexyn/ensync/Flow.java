@@ -9,7 +9,7 @@ import static com.olexyn.ensync.Main.MAP_OF_SYNCMAPS;
 public class Flow implements Runnable {
 
 
-
+    Tools tools = new Tools();
 
 
     private String state;
@@ -27,22 +27,22 @@ public class Flow implements Runnable {
                 for (var syncMapEntry : MAP_OF_SYNCMAPS.entrySet()) {
 
 
-                    for (var syncDirectoryEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
+                    for (var SDEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
 
-                        SyncDirectory syncDirectory = syncDirectoryEntry.getValue();
+                        SyncDirectory SD = SDEntry.getValue();
 
                         state = "READ";
-                        syncDirectory.findState();
+                        SD.findState();
 
-                        syncDirectory.makeListCreated();
-                        syncDirectory.makeListDeleted();
-                        syncDirectory.makeListModified();
+                        SD.makeListCreated();
+                        SD.makeListDeleted();
+                        SD.listModified = SD.makeListModified();
 
-                        syncDirectory.doCreate();
-                        syncDirectory.doDelete();
-                        syncDirectory.doModify();
+                        SD.doCreate();
+                        SD.doDelete();
+                        SD.doModify();
 
-                        syncDirectory.writeStateFile(syncDirectory.path);
+                        SD.writeStateFile(SD.path);
                     }
 
 
@@ -76,14 +76,14 @@ public class Flow implements Runnable {
             state = syncMap.toString();
 
             for (var stringSyncDirectoryEntry : syncMap.syncDirectories.entrySet()) {
-                SyncDirectory syncDirectory = stringSyncDirectoryEntry.getValue();
-                String path = syncDirectory.path;
-                String stateFilePath = syncDirectory.stateFilePath(path);
+                SyncDirectory SD = stringSyncDirectoryEntry.getValue();
+                String path = SD.path;
+                String stateFilePath = tools.stateFilePath(path);
 
                 if (new File(stateFilePath).exists()) {
-                    state = "READ-STATE-FILE-" + syncDirectory.readStateFile();
+                    state = "READ-STATE-FILE-" + SD.readStateFile();
                 } else {
-                    syncDirectory.writeStateFile(path);
+                    SD.writeStateFile(path);
                 }
             }
 
