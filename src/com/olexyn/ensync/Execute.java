@@ -27,15 +27,24 @@ public class Execute {
         return twobr;
     }
 
-    public void executeBatch(List<String[]> batch){
+
+    public TwoBr execute(List<String> cmd) {
+
+        String[] cmdArr = new String[cmd.size()];
+        for (int i = 0; i < cmd.size(); i++) {
+            cmdArr[i] = cmd.get(i);
+        }
+
+        return execute(cmdArr);
+    }
+
+    public void executeBatch(List<String[]> batch) {
 
         for (String[] strings : batch) {
             execute(strings);
         }
 
     }
-
-
 
 
     public class TwoBr {

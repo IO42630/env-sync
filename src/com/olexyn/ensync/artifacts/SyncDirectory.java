@@ -15,6 +15,7 @@ import java.util.Map;
 public class SyncDirectory {
 
     private String flowState;
+    private SyncDirectory thisSD = this;
 
 
     private SyncMap syncMap;
@@ -44,7 +45,7 @@ public class SyncDirectory {
     /**
      * Get the current state by using the `find` command.
      */
-    public Map<String, SyncFile> findState() {
+    public Map<String, SyncFile> readFreshState() {
         //NOTE that the SFile().lastModifiedOld is not set here, so it is 0 by default.
         Map<String, SyncFile> filemap = new HashMap<>();
 
@@ -81,7 +82,7 @@ public class SyncDirectory {
             String sFilePath = line.replace(modTimeString + " ", "");
             SyncFile sfile = new SyncFile(this, sFilePath);
 
-            sfile.setStateFileTime(modTime);
+            sfile.setTimeModifiedFromStateFile(modTime);
 
             filemap.put(sFilePath, sfile);
         }
@@ -98,7 +99,7 @@ public class SyncDirectory {
      * @return
      */
     public void makeListCreated() {
-        Map<String, SyncFile> fromA = findState();
+        Map<String, SyncFile> fromA = readFreshState();
         Map<String, SyncFile> substractB = readStateFile();
 
         listCreated = tools.mapMinus(fromA, substractB);
@@ -111,9 +112,12 @@ public class SyncDirectory {
      */
     public void makeListDeleted() {
         Map<String, SyncFile> fromA = readStateFile();
-        Map<String, SyncFile> substractB = findState();
+        Map<String, SyncFile> substractB = readFreshState();
 
         listDeleted = tools.mapMinus(fromA, substractB);
+
+
+
     }
 
 
@@ -124,22 +128,18 @@ public class SyncDirectory {
     public List<SyncFile> makeListModified() {
 
         listModified = new ArrayList<>();
-        Map<String, SyncFile> oldMap = readStateFile();
+        Map<String, SyncFile> stateFileMap = readStateFile();
 
-        for (var newFileEntry : findState().entrySet()) {
+        for (var freshFileEntry : readFreshState().entrySet()) {
 
-            String newFileKey = newFileEntry.getKey();
+            String freshFileKey = freshFileEntry.getKey();
+            SyncFile freshFile = freshFileEntry.getValue();
 
             // If KEY exists in OLD , thus FILE was NOT created.
-            if (oldMap.containsKey(newFileKey)) {
+            if (stateFileMap.containsKey(freshFileKey)) {
 
-                SyncFile newFile = newFileEntry.getValue();
-
-                long lastModifiedNew = newFile.lastModified();
-                long lastModifiedOld = oldMap.get(newFileKey).stateFileTime();
-
-                if (lastModifiedNew > lastModifiedOld) {
-                    listModified.add(newFile);
+                if (freshFile.getTimeModified() > freshFile.getTimeModifiedFromStateFile()) {
+                    listModified.add(freshFile);
                 }
             }
         }
@@ -172,15 +172,10 @@ public class SyncDirectory {
 
     private class Info {
 
-        private String relativePath;
         private String thisFilePath;
         private String otherFilePath;
-        private File otherFile;
         private String otherParentPath;
         private File otherParentFile;
-        private long thisStateFileTime;
-        private long thisFileTimeModified;
-        private long otherFileTimeModified;
 
 
         private Info(SyncDirectory thisSD, SyncFile sFile, SyncDirectory otherSD) {
@@ -189,38 +184,21 @@ public class SyncDirectory {
             //  otherSyncDirectory /bar
             //  createdFile  /foo/hello/created-file.gif
             //  relativePath /hello/created-file.gif
-            this.relativePath = sFile.getPath().replace(thisSD.path, "");
+            String relativePath = sFile.getPath().replace(thisSD.path, "");
             this.thisFilePath = sFile.getPath();
             this.otherFilePath = otherSD.path + relativePath;
-            this.otherFile = new File(otherFilePath);
+            File otherFile = new File(otherFilePath);
 
             this.otherParentPath = otherFile.getParent();
             this.otherParentFile = new File(otherParentPath);
 
-            if (thisSD.readStateFile().get(thisFilePath) != null) {
-                this.thisStateFileTime = thisSD.readStateFile().get(thisFilePath).stateFileTime();
-            } else {
-                // thisFile does not exist in StateFile, a value of 0 can be seen as equal to "never existed".
-                this.thisStateFileTime = 0;
-            }
-            this.thisFileTimeModified = sFile.lastModified();
 
 
-            if (otherFile.exists()) {
 
-                this.otherFileTimeModified = otherFile.lastModified();
 
-            } else {
-                if (otherSD.readStateFile().get(otherFilePath) != null) {
-                    this.otherFileTimeModified = otherSD.readStateFile().get(otherFilePath).stateFileTime();
-                } else {
-                    this.otherFileTimeModified = 0;
-                }
-            }
+
 
         }
-
-
     }
 
 
@@ -228,17 +206,14 @@ public class SyncDirectory {
 
         for (SyncFile createdFile : listCreated) {
 
-            if (createdFile.isFile()) {
+            for (var otherEntry : syncMap.syncDirectories.entrySet()) {
+                SyncDirectory otherSD = otherEntry.getValue();
 
-                for (var otherEntry : syncMap.syncDirectories.entrySet()) {
-                    SyncDirectory otherSD = otherEntry.getValue();
+                if (this.equals(otherSD)) { continue; }
 
-                    if (this.equals(otherSD)) { continue; }
+                Info info = new Info(this, createdFile, otherSD);
 
-                    Info info = new Info(this, createdFile, otherSD);
-
-                    writeFile(info, this, createdFile, otherSD);
-                }
+                writeFile(info, this, createdFile, otherSD);
             }
         }
     }
@@ -256,18 +231,22 @@ public class SyncDirectory {
 
                 if (this.equals(otherSD)) { continue; }
 
-                Info info = new Info(this, deletedFile, otherSD);
-                if (info.otherFile.isFile()) {
+                Info info = new Info(thisSD, deletedFile, otherSD);
+                deleteFile(info, thisSD, deletedFile, otherSD);
 
-                    // if the otherFile was created with ensync it will have the == TimeModified.
-                    if (info.thisStateFileTime >= info.otherFileTimeModified) {
-                        String[] cmd = new String[]{"rm",
-                                                    "-r",
-                                                    info.otherFilePath};
-                        x.execute(cmd);
-                    }
-                }
+
             }
+        }
+    }
+
+    private void deleteFile(Info info, SyncDirectory thisSD, SyncFile thisFile, SyncDirectory otherSD){
+
+        SyncFile otherFile = new SyncFile(otherSD, otherSD.path + thisFile.relativePath);
+
+        // if the otherFile was created with ensync it will have the == TimeModified.
+        if (thisFile.getTimeModified() >= otherFile.getTimeModified()) {
+            List<String> cmd = List.of("rm", "-r", info.otherFilePath);
+            x.execute(cmd);
         }
     }
 
@@ -276,47 +255,45 @@ public class SyncDirectory {
 
         for (SyncFile modifiedFile : this.listModified) {
 
-            if (modifiedFile.isFile()) {
+            for (var otherEntry : syncMap.syncDirectories.entrySet()) {
+                SyncDirectory otherSD = otherEntry.getValue();
 
-                for (var otherEntry : syncMap.syncDirectories.entrySet()) {
-                    SyncDirectory otherSD = otherEntry.getValue();
+                if (this.equals(otherSD)) { continue; }
 
-                    if (this.equals(otherSD)) { continue; }
+                Info info = new Info(this, modifiedFile, otherSD);
 
-                    Info info = new Info(this, modifiedFile, otherSD);
-
-                    writeFile(info, this, modifiedFile, otherSD);
-
-                }
+                writeFile(info, this, modifiedFile, otherSD);
             }
-
         }
     }
 
 
     private void writeFile(Info info, SyncDirectory thisSD, SyncFile thisFile, SyncDirectory otherSD) {
 
-        File otherFile = new File(otherSD.path + thisFile.relativePath);
+        SyncFile otherFile = new SyncFile(otherSD, otherSD.path + thisFile.relativePath);
 
-        if (!otherFile.exists() || info.thisFileTimeModified > info.otherFileTimeModified) {
+
+        if (otherFile.exists() && thisFile.getTimeModified() < otherFile.getTimeModified()) { return;}
+
+
+        if (thisFile.isDirectory() && !otherFile.exists()) {
+            List<String> cmd = List.of("mkdir", "-p", info.otherFilePath);
+            x.execute(cmd);
+            return;
+        }
+
+        if (thisFile.isFile()) {
+
             if (!info.otherParentFile.exists()) {
-                String[] cmd = new String[]{"mkdir",
-                                            "-p",
-                                            info.otherParentPath};
+                List<String> cmd = List.of("mkdir", "-p", info.otherParentPath);
                 x.execute(cmd);
             }
-            String[] cmd = new String[]{"cp",
-                                        "-p",
-                                        info.thisFilePath,
-                                        info.otherFilePath};
+
+            List<String> cmd = List.of("cp", "-p", info.thisFilePath, info.otherFilePath);
             x.execute(cmd);
         }
     }
 
-
-    public String flowState() {
-        return flowState == null ? "NONE" : flowState;
-    }
 
 
 }

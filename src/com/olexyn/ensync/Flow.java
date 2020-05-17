@@ -32,7 +32,7 @@ public class Flow implements Runnable {
                         SyncDirectory SD = SDEntry.getValue();
 
                         state = "READ";
-                        SD.findState();
+                        SD.readFreshState();
 
                         SD.makeListCreated();
                         SD.makeListDeleted();
@@ -51,8 +51,9 @@ public class Flow implements Runnable {
 
 
             try {
-                System.out.println("Pausing...");
-                Thread.sleep(2000);
+                long pause = 2000;
+                System.out.println("Pausing... for "+pause+ "ms.");
+                Thread.sleep(pause);
             } catch (InterruptedException ignored) {
 
             }
