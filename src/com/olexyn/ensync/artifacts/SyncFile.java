@@ -1,12 +1,13 @@
 package com.olexyn.ensync.artifacts;
 
 import java.io.File;
+import java.util.Map;
 
 public class SyncFile extends File {
 
 
     // Very IMPORTANT field. Allows to store lastModified as it is stored in the StateFile.
-    private long timeModifiedFromStateFile = 0;
+    public long timeModifiedFromStateFile = 0;
 
     public String relativePath;
     private SyncDirectory sd;
@@ -30,7 +31,10 @@ public class SyncFile extends File {
 
 
     public long getTimeModifiedFromStateFile(){
-        return sd.readStateFile().get(this.getPath()).timeModifiedFromStateFile;
+        SyncFile record = sd.readStateFile().get(this.getPath());
+
+
+        return record == null ? 0 : record.timeModifiedFromStateFile;
     }
 
 

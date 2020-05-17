@@ -34,8 +34,8 @@ public class Flow implements Runnable {
                         state = "READ";
                         SD.readFreshState();
 
-                        SD.makeListCreated();
-                        SD.makeListDeleted();
+                        SD.listCreated = SD.makeListCreated();
+                        SD.listDeleted = SD.makeListDeleted();
                         SD.listModified = SD.makeListModified();
 
                         SD.doCreate();

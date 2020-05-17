@@ -95,14 +95,13 @@ public class SyncDirectory {
     /**
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
-     *
-     * @return
      */
-    public void makeListCreated() {
+    public Map<String, SyncFile> makeListCreated() {
+
         Map<String, SyncFile> fromA = readFreshState();
         Map<String, SyncFile> substractB = readStateFile();
 
-        listCreated = tools.mapMinus(fromA, substractB);
+        return tools.mapMinus(fromA, substractB);
     }
 
 
@@ -110,11 +109,12 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      */
-    public void makeListDeleted() {
+    public Map<String, SyncFile> makeListDeleted() {
+
         Map<String, SyncFile> fromA = readStateFile();
         Map<String, SyncFile> substractB = readFreshState();
 
-        listDeleted = tools.mapMinus(fromA, substractB);
+        Map<String, SyncFile> listDeleted = tools.mapMinus(fromA, substractB);
 
         Map<String, SyncFile> swap = new HashMap<>();
 
@@ -124,15 +124,12 @@ public class SyncDirectory {
             String key = entry.getKey();
             String parentKey = entry.getValue().getParent();
 
-
             if (listDeleted.containsKey(parentKey) || swap.containsKey(parentKey)) {
                 swap.put(key, listDeleted.get(key));
             }
         }
 
-        listDeleted = tools.mapMinus(listDeleted, swap);
-
-
+        return tools.mapMinus(listDeleted, swap);
     }
 
 
@@ -142,7 +139,8 @@ public class SyncDirectory {
      */
     public Map<String, SyncFile> makeListModified() {
 
-        listModified.clear();
+        Map<String, SyncFile> listModified = new HashMap<>();
+
         Map<String, SyncFile> stateFileMap = readStateFile();
 
         for (var freshFileEntry : readFreshState().entrySet()) {
@@ -153,11 +151,11 @@ public class SyncDirectory {
             if (freshFile.isDirectory()) { continue;} // no need to modify Directories, the Filesystem will do that, if a File changed.
 
             // If KEY exists in OLD , thus FILE was NOT created.
-            if (stateFileMap.containsKey(freshFileKey)) {
+            boolean oldFileExists = stateFileMap.containsKey(freshFileKey);
+            boolean fileIsFresher = freshFile.getTimeModified() > freshFile.getTimeModifiedFromStateFile();
 
-                if (freshFile.getTimeModified() > freshFile.getTimeModifiedFromStateFile()) {
-                    listModified.put(freshFileKey, freshFile);
-                }
+            if (oldFileExists && fileIsFresher) {
+                listModified.put(freshFileKey, freshFile);
             }
         }
         return listModified;
@@ -257,7 +255,12 @@ public class SyncDirectory {
 
         SyncFile otherFile = new SyncFile(otherSD, otherSD.path + thisFile.relativePath);
 
+        if (!otherFile.exists()) { return;}
+
         // if the otherFile was created with ensync it will have the == TimeModified.
+        long thisFileTimeModified = thisFile.getTimeModified();
+        long otherFileTimeModified = otherFile.getTimeModified();
+
         if (thisFile.getTimeModified() >= otherFile.getTimeModified()) {
             List<String> cmd = List.of("rm", "-r", info.otherFilePath);
             x.execute(cmd);
@@ -299,16 +302,60 @@ public class SyncDirectory {
 
         if (thisFile.isFile()) {
 
+
             if (!info.otherParentFile.exists()) {
-                List<String> cmd = List.of("mkdir", "-p", info.otherParentPath);
-                x.execute(cmd);
+                makeParentChain(otherFile, thisFile);
+                // List<String> cmd = List.of("mkdir", "-p", info.otherParentPath);
+                //x.execute(cmd);
             }
 
             List<String> cmd = List.of("cp", "-p", info.thisFilePath, info.otherFilePath);
             x.execute(cmd);
+            copyModifDate(thisFile.getParentFile(), otherFile.getParentFile());
         }
     }
 
+
+    private void makeParentChain(File otherFile, File thisFile) {
+        try {
+            File otherParent = new File(otherFile.getParent());
+            File thisParent = new File(thisFile.getParent());
+
+            if (!otherParent.exists()) {
+                makeParentChain(otherParent, thisParent);
+                makeParentChain(otherFile, thisFile);
+
+            } else if (thisFile.isDirectory()) {
+
+                List<String> cmd = List.of("mkdir", otherFile.getPath());
+                x.execute(cmd);
+
+
+                cmd = List.of("stat", "--format", "%y", thisFile.getPath());
+
+
+                String mDate = x.execute(cmd).output.readLine();
+
+
+                cmd = List.of("touch", "-m", "--date=" + mDate, otherFile.getPath());
+                String error = x.execute(cmd).error.readLine();
+                int br = 0;
+
+
+            }
+        } catch (Exception ignored) {}
+    }
+
+
+    private void copyModifDate(File fromFile, File toFile) {
+        try {
+            List<String> cmd = List.of("stat", "--format", "%y", fromFile.getPath());
+            String mDate = x.execute(cmd).output.readLine();
+
+            cmd = List.of("touch", "-m", "--date=" + mDate, toFile.getPath());
+            x.execute(cmd);
+        } catch (Exception ignored) {}
+    }
 
 }
 
