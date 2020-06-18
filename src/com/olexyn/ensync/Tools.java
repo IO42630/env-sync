@@ -62,6 +62,15 @@ public class Tools {
         return lines;
     }
 
+    public String fileToString(File file){
+        List<String> lineList = fileToLines(file);
+        StringBuilder sb = new StringBuilder();
+        for (String line : lineList){
+            sb.append(line).append("\n");
+        }
+        return sb.toString();
+    }
+
 
     public Map<String, SyncFile> mapMinus(Map<String, SyncFile> fromA, Map<String, SyncFile> substractB) {
 
