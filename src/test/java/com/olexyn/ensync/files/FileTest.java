@@ -3,8 +3,11 @@ package com.olexyn.ensync.files;
 import com.olexyn.ensync.Execute;
 import com.olexyn.ensync.Tools;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileTest {
 
@@ -16,133 +19,138 @@ public class FileTest {
     private static final String fileAPath = "asdf";
     private static final String fileBPath = "asff";
 
-    private final File a = new File(fileAPath);
-    private final File b = new File(fileBPath);
+    private final TestFile a = new TestFile(fileAPath);
+    private final TestFile b = new TestFile(fileBPath);
 
-    private void createFile(File file){
-
+    private List<String> createFile(File file) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            System.out.println("");
+        }
+        return new ArrayList<String>();
     }
 
-    private void updateFile(File file){
-
+    private List<String> updateFile(File file) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            System.out.println("");
+        }
+        return new ArrayList<String>();
     }
 
 
-    private void deleteFile(File file){
-
+    private void deleteFile(File file) {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            System.out.println("");
+        }
     }
 
+    private void cleanDirs() {
+        deleteFile(a);
+        deleteFile(b);
+    }
 
+    /**
+     * Perform the 15 test cases in TestCases.xlsx.
+     */
+    @Test
+    public void doFileTests() {
 
+        List<String> sideloadContentA;
+        List<String> sideloadContentB;
 
-
-    public void deleteA(){
-
+        // 1
+        createFile(a);
+        deleteFile(a);
         Assert.assertFalse(a.exists());
         Assert.assertFalse(b.exists());
-
-
-
+        cleanDirs();
+        // 2
+        createFile(b);
+        createFile(a);
+        deleteFile(a);
+        Assert.assertFalse(a.exists());
+        Assert.assertFalse(b.exists());
+        cleanDirs();
+        // 3
+        createFile(a);
+        createFile(b);
+        deleteFile(a);
+        deleteFile(b);
+        Assert.assertFalse(a.exists());
+        Assert.assertFalse(b.exists());
+        cleanDirs();
+        // 4
+        createFile(a);
+        deleteFile(a);
+        sideloadContentB = createFile(b);
+        Assert.assertEquals(sideloadContentB, a.updateContent().getContent());
+        cleanDirs();
+        // 5
+        createFile(a);
+        createFile(b);
+        deleteFile(a);
+        sideloadContentB = updateFile(b);
+        Assert.assertEquals(sideloadContentB, a.updateContent().getContent());
+        cleanDirs();
+        // 6
+        sideloadContentA = createFile(a);
+        Assert.assertEquals(sideloadContentA, b.updateContent().getContent());
+        // 7
+        createFile(b);
+        createFile(a);
+        Assert.assertEquals(sideloadContentA, b.updateContent().getContent());
+        // 8
+        createFile(a);
+        createFile(b);
+        deleteFile(b);
+        Assert.assertFalse(a.exists());
+        Assert.assertFalse(b.exists());
+        cleanDirs();
+        //9
+        createFile(a);
+        sideloadContentB = createFile(b);
+        Assert.assertEquals(sideloadContentB, a.updateContent().getContent());
+        cleanDirs();
+        // 10
+        createFile(b);
+        createFile(a);
+        sideloadContentB = updateFile(b);
+        Assert.assertEquals(sideloadContentB, a.updateContent().getContent());
+        // 11
+        createFile(a);
+        sideloadContentA = updateFile(a);
+        Assert.assertEquals(sideloadContentA, b.updateContent().getContent());
+        // 12
+        createFile(a);
+        createFile(b);
+        sideloadContentA = updateFile(a);
+        Assert.assertEquals(sideloadContentA, b.updateContent().getContent());
+        // 13
+        createFile(a);
+        createFile(b);
+        updateFile(a);
+        deleteFile(b);
+        Assert.assertFalse(a.exists());
+        Assert.assertFalse(b.exists());
+        cleanDirs();
+        // 14
+        createFile(a);
+        updateFile(a);
+        sideloadContentB = createFile(b);
+        Assert.assertEquals(sideloadContentB, a.updateContent().getContent());
+        cleanDirs();
+        // 15
+        createFile(a);
+        createFile(b);
+        updateFile(a);
+        sideloadContentB = updateFile(b);
+        Assert.assertEquals(sideloadContentB, a.updateContent().getContent());
+        cleanDirs();
     }
-
-    /**
-     * Simulates user activity on disk.
-     */
-    void createFiles() throws InterruptedException {
-        StringBuilder sbA = new StringBuilder("a");
-        StringBuilder sbB = new StringBuilder("b");
-
-        // dv (deleted-void)
-        // TODO
-
-        // dd
-        tools.writeSbToPath(PATH+"/a/dd", sbA);
-        Thread.sleep(10);
-        tools.writeSbToPath(PATH+"/b/dd", sbB);
-        Thread.sleep(10);Thread.sleep(10);
-        x.execute(new String[]{"rm", PATH+"/a/dd"});
-        Thread.sleep(10);
-        x.execute(new String[]{"rm", PATH+"/b/dd"});
-        Thread.sleep(10);
-
-        // dc
-        tools.writeSbToPath(PATH+"/a/dc", sbA);
-        Thread.sleep(10);
-        x.execute(new String[]{"rm", PATH+"/a/dc"});
-        Thread.sleep(10);
-        tools.writeSbToPath(PATH+"/b/dc", sbB);
-        Thread.sleep(10);
-
-        // dm
-        tools.writeSbToPath(PATH+"/a/dm", sbA);
-        Thread.sleep(10);
-        x.execute(new String[]{"rm", PATH+"/a/dm"});
-        Thread.sleep(10);
-        tools.writeSbToPath(PATH+"/b/dm", sbB);
-        Thread.sleep(10);
-
-        // dv (deleted-void)
-        // TODO
-
-        // cd
-        // TODO
-
-        // cc
-        // TODO
-
-        // cm
-        // TODO
-
-        // cv (created-void)
-        // TODO
-
-        // md
-        // TODO
-
-        // mc
-        // TODO
-
-        // mm
-        // TODO
-
-    }
-
-
-    /**
-     * Checks if end-state is as desired.
-     * @throws Exception otherwise.
-     */
-    void fileTest() throws Exception {
-
-
-
-
-
-
-
-        // Files where the second (= the newer) file was deleted. Thus both files should not exist in the end-state.
-        String[] arrayToDelete = {"/a/dd", "/b/dd" , "/a/cd", "/b/cd", "/a/md", "/b/md"};
-        for (String path : arrayToDelete){
-            if (new TestableFile(path).exists()) throw new Exception();
-        }
-
-        // Files where the second (= the newer) file was created or modified. Thus both files should contain "b" in the end-state.
-        String[] arrayToB = {"/a/dc", "/b/dc" , "/a/dm", "/b/dm", "/a/cc", "/b/cc"};
-        for (String path : arrayToB){
-            if (!new TestableFile(path).hasContent("b")) throw new Exception();
-        }
-
-
-
-
-    }
-
-
-    // Assertion Exception
-
-
-
-
-
 
 }
