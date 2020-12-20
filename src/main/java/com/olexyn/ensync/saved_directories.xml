@@ -1,0 +1,11 @@
+<syncmap>
+    <name>SyncMap1</name>
+    <syncdirectory>
+        <name>SyncDirectory1</name>
+        <path>/foo/dir</path>
+    </syncdirectory>
+    <syncdirectory>
+        <name>SyncDirectory2</name>
+        <path>/bar/dir</path>
+    </syncdirectory>
+</syncmap>
