@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A SyncDirectory is an occurrence of a particular directory somewhere across the filesystems.
+ * A SyncDirectory is a singular occurrence of a directory in the filesystems.
  */
 public class SyncDirectory {
 
@@ -18,7 +18,7 @@ public class SyncDirectory {
     private SyncDirectory thisSD = this;
 
 
-    private SyncMap syncMap;
+    private final SyncMap syncMap;
     public String path = null;
 
     public Map<String, SyncFile> listCreated = new HashMap<>();
@@ -59,11 +59,7 @@ public class SyncDirectory {
 
             filemap.put(filePath, file);
         }
-
-
         return filemap;
-
-
     }
 
 
@@ -86,9 +82,7 @@ public class SyncDirectory {
 
             filemap.put(sFilePath, sfile);
         }
-
         return filemap;
-
     }
 
 

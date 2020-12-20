@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A SyncMap is the set of such SyncDirectories. The purpose of the SyncMap is to help syncronize the SyncDirectories.
+ * A SyncMap is a map of SyncDirectories. <br>
+ * It synchronizes the SyncDirectories it contains.
  */
 public class SyncMap {
 
