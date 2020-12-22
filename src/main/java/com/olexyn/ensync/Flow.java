@@ -4,7 +4,6 @@ import com.olexyn.ensync.artifacts.SyncDirectory;
 import com.olexyn.ensync.artifacts.SyncMap;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import static com.olexyn.ensync.Main.MAP_OF_SYNCMAPS;
@@ -45,15 +44,15 @@ public class Flow implements Runnable {
 
     private void doSyncDirectory(SyncDirectory SD) {
         state = "READ";
-        SD.readFreshState();
+        SD.readStateFromFS();
 
-        SD.listCreated = SD.makeListCreated();
-        SD.listDeleted = SD.makeListDeleted();
-        SD.listModified = SD.makeListModified();
+        SD.listCreated = SD.makeListOfLocallyCreatedFiles();
+        SD.listDeleted = SD.makeListOfLocallyDeletedFiles();
+        SD.listModified = SD.makeListOfLocallyModifiedFiles();
 
-        SD.doCreate();
-        SD.doDelete();
-        SD.doModify();
+        SD.doCreateOpsOnOtherSDs();
+        SD.doDeleteOpsOnOtherSDs();
+        SD.doModifyOpsOnOtherSDs();
 
         SD.writeStateFile(SD.path);
     }

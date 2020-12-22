@@ -45,12 +45,14 @@ public class SyncDirectory {
     /**
      * Get the current state by using the `find` command.
      */
-    public Map<String, SyncFile> readFreshState() {
+    public Map<String, SyncFile> readStateFromFS() {
         //NOTE that the SFile().lastModifiedOld is not set here, so it is 0 by default.
         Map<String, SyncFile> filemap = new HashMap<>();
 
-        Execute.TwoBr find = x.execute(new String[]{"find",
-                                                    path});
+        Execute.TwoBr find = x.execute(new String[]{
+            "find",
+            path
+        });
 
         List<String> pathList = tools.brToListString(find.output);
 
@@ -90,9 +92,9 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      */
-    public Map<String, SyncFile> makeListCreated() {
+    public Map<String, SyncFile> makeListOfLocallyCreatedFiles() {
 
-        Map<String, SyncFile> fromA = readFreshState();
+        Map<String, SyncFile> fromA = readStateFromFS();
         Map<String, SyncFile> substractB = readStateFile();
 
         return tools.mapMinus(fromA, substractB);
@@ -103,10 +105,10 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      */
-    public Map<String, SyncFile> makeListDeleted() {
+    public Map<String, SyncFile> makeListOfLocallyDeletedFiles() {
 
         Map<String, SyncFile> fromA = readStateFile();
-        Map<String, SyncFile> substractB = readFreshState();
+        Map<String, SyncFile> substractB = readStateFromFS();
 
         Map<String, SyncFile> listDeleted = tools.mapMinus(fromA, substractB);
 
@@ -131,13 +133,13 @@ public class SyncDirectory {
      * Compare the OLD and NEW pools.
      * List is cleared and created each time.
      */
-    public Map<String, SyncFile> makeListModified() {
+    public Map<String, SyncFile> makeListOfLocallyModifiedFiles() {
 
         Map<String, SyncFile> listModified = new HashMap<>();
 
         Map<String, SyncFile> stateFileMap = readStateFile();
 
-        for (var freshFileEntry : readFreshState().entrySet()) {
+        for (var freshFileEntry : readStateFromFS().entrySet()) {
 
             String freshFileKey = freshFileEntry.getKey();
             SyncFile freshFile = freshFileEntry.getValue();
@@ -206,7 +208,7 @@ public class SyncDirectory {
     }
 
 
-    public void doCreate() {
+    public void doCreateOpsOnOtherSDs() {
 
         for (var entry : listCreated.entrySet()) {
             SyncFile createdFile = entry.getValue();
@@ -218,7 +220,7 @@ public class SyncDirectory {
 
                 Info info = new Info(this, createdFile, otherSD);
 
-                writeFile(info, this, createdFile, otherSD);
+                writeFileIfNewer(info, createdFile, otherSD);
             }
         }
     }
@@ -227,7 +229,7 @@ public class SyncDirectory {
     /**
      *
      */
-    public void doDelete() {
+    public void doDeleteOpsOnOtherSDs() {
 
         for (var entry : listDeleted.entrySet()) {
             SyncFile deletedFile = entry.getValue();
@@ -262,7 +264,7 @@ public class SyncDirectory {
     }
 
 
-    public void doModify() {
+    public void doModifyOpsOnOtherSDs() {
 
         for (var entry : listModified.entrySet()) {
             SyncFile modifiedFile = entry.getValue();
@@ -274,19 +276,22 @@ public class SyncDirectory {
 
                 Info info = new Info(this, modifiedFile, otherSD);
 
-                writeFile(info, this, modifiedFile, otherSD);
+                writeFileIfNewer(info, modifiedFile, otherSD);
             }
         }
     }
 
-
-    private void writeFile(Info info, SyncDirectory thisSD, SyncFile thisFile, SyncDirectory otherSD) {
+    /***
+     *
+     * @param info
+     * @param thisFile
+     * @param otherSD
+     */
+    private void writeFileIfNewer(Info info, SyncFile thisFile, SyncDirectory otherSD) {
 
         SyncFile otherFile = new SyncFile(otherSD, otherSD.path + thisFile.relativePath);
 
-
         if (otherFile.exists() && thisFile.getTimeModified() < otherFile.getTimeModified()) { return;}
-
 
         if (thisFile.isDirectory() && !otherFile.exists()) {
             List<String> cmd = List.of("mkdir", "-p", info.otherFilePath);
@@ -296,11 +301,8 @@ public class SyncDirectory {
 
         if (thisFile.isFile()) {
 
-
             if (!info.otherParentFile.exists()) {
                 makeParentChain(otherFile, thisFile);
-                // List<String> cmd = List.of("mkdir", "-p", info.otherParentPath);
-                //x.execute(cmd);
             }
 
             List<String> cmd = List.of("cp", "-p", info.thisFilePath, info.otherFilePath);
@@ -309,7 +311,10 @@ public class SyncDirectory {
         }
     }
 
-
+    /**
+     * @param otherFile
+     * @param thisFile
+     */
     private void makeParentChain(File otherFile, File thisFile) {
         try {
             File otherParent = new File(otherFile.getParent());
