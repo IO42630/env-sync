@@ -1,17 +1,20 @@
 package com.olexyn.ensync;
 
+import com.olexyn.ensync.artifacts.MapOfSyncMaps;
 import com.olexyn.ensync.artifacts.SyncDirectory;
 import com.olexyn.ensync.artifacts.SyncMap;
 
 import java.io.File;
 import java.util.Map.Entry;
 
-import static com.olexyn.ensync.Main.MAP_OF_SYNCMAPS;
+
 
 public class Flow implements Runnable {
 
 
     Tools tools = new Tools();
+
+    public long pollingPause = 200;
 
 
     private String state;
@@ -21,11 +24,11 @@ public class Flow implements Runnable {
 
         while (true) {
 
-            synchronized (MAP_OF_SYNCMAPS) {
+            synchronized (MapOfSyncMaps.get()) {
 
                 readOrMakeStateFile();
 
-                for (Entry<String, SyncMap> syncMapEntry : MAP_OF_SYNCMAPS.entrySet()) {
+                for (Entry<String, SyncMap> syncMapEntry : MapOfSyncMaps.get().entrySet()) {
 
                     for (Entry<String, SyncDirectory> SDEntry : syncMapEntry.getValue().syncDirectories.entrySet()) {
 
@@ -34,9 +37,8 @@ public class Flow implements Runnable {
                 }
             }
             try {
-                long pause = 2000;
-                System.out.println("Pausing... for " + pause + "ms.");
-                Thread.sleep(pause);
+                System.out.println("Pausing... for " + pollingPause + "ms.");
+                Thread.sleep(pollingPause);
             } catch (InterruptedException ignored) {}
         }
     }
@@ -68,7 +70,7 @@ public class Flow implements Runnable {
      * If the StateFile is missing, then create a StateFile.
      */
     private void readOrMakeStateFile() {
-        for (var syncMapEntry : MAP_OF_SYNCMAPS.entrySet()) {
+        for (var syncMapEntry : MapOfSyncMaps.get().entrySet()) {
             SyncMap syncMap = syncMapEntry.getValue();
             state = syncMap.toString();
 

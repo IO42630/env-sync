@@ -1,12 +1,13 @@
 package com.olexyn.ensync.ui;
 
 
+import com.olexyn.ensync.artifacts.MapOfSyncMaps;
 import com.olexyn.ensync.artifacts.SyncMap;
 
 
 import java.io.File;
 
- import static com.olexyn.ensync.Main.MAP_OF_SYNCMAPS;
+
 
 /**
  * Connect the Controller and the Flow
@@ -16,22 +17,22 @@ public class Bridge {
 
     void newCollection(String collectionName) {
 
-        synchronized (MAP_OF_SYNCMAPS) {
-            MAP_OF_SYNCMAPS.put(collectionName, new SyncMap(collectionName));
+        synchronized (MapOfSyncMaps.get()) {
+            MapOfSyncMaps.get().put(collectionName, new SyncMap(collectionName));
         }
     }
 
 
     void removeCollection(String collectionName) {
-        synchronized (MAP_OF_SYNCMAPS) {
-            MAP_OF_SYNCMAPS.remove(collectionName);
+        synchronized (MapOfSyncMaps.get()) {
+            MapOfSyncMaps.get().remove(collectionName);
         }
     }
 
 
     void addDirectory(String collectionName, File diretory) {
-        synchronized (MAP_OF_SYNCMAPS) {
-            MAP_OF_SYNCMAPS.get(collectionName).addDirectory(diretory.getAbsolutePath());
+        synchronized (MapOfSyncMaps.get()) {
+            MapOfSyncMaps.get().get(collectionName).addDirectory(diretory.getAbsolutePath());
         }
         //TODO pause syning when adding
     }
@@ -43,8 +44,8 @@ public class Bridge {
      */
     void removeDirectory(String directoryAbsolutePath) {
         //TODO fix ConcurrentModificationException. This will possibly resolve further errors.
-        synchronized (MAP_OF_SYNCMAPS) {
-            for (var syncMap : MAP_OF_SYNCMAPS.entrySet()) {
+        synchronized (MapOfSyncMaps.get()) {
+            for (var syncMap : MapOfSyncMaps.get().entrySet()) {
                 syncMap.getValue().removeDirectory(directoryAbsolutePath);
             }
         }

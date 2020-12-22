@@ -1,5 +1,6 @@
 package com.olexyn.ensync;
 
+import com.olexyn.ensync.artifacts.MapOfSyncMaps;
 import com.olexyn.ensync.artifacts.SyncMap;
 import com.olexyn.ensync.ui.UI;
 
@@ -13,11 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Main{
+public class Main {
 
     final public static Thread UI_THREAD = new Thread(new UI(), "ui");
     final public static Thread FLOW_THREAD = new Thread(new Flow(), "flow");
-    final public static HashMap<String, SyncMap> MAP_OF_SYNCMAPS = new HashMap<>();
     final private static Tools tools = new Tools();
 
     public static void main(String[] args) {
@@ -37,7 +37,7 @@ public class Main{
                     for (Object jsonSyncDirPath : jsonMapOfSyncMaps.getJSONArray(key).toList()) {
                         syncMap.addDirectory(jsonSyncDirPath.toString());
                     }
-                    MAP_OF_SYNCMAPS.put(key, syncMap);
+                    MapOfSyncMaps.get().put(key, syncMap);
                 }
                 break;
             default:
